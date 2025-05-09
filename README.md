@@ -1,0 +1,2 @@
+# GigaMachineDarby
+2Dアクションbチームのプロジェクトです。
