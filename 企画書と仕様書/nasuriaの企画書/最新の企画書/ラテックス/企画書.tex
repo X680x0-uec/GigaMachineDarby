@@ -53,6 +53,7 @@
   \centering
   \caption{PCでの左右移動のキー対応}
   \begin{tabular}{c|c}
+    \hline
     動作 & 対応するキー \\
     \hline
     右に動く & 右矢印キー \\
@@ -60,6 +61,7 @@
     \hline
     左に動く & 左矢印キー \\
       & Aキー \\
+    \hline
   \end{tabular}
 \end{table}
 
@@ -67,13 +69,15 @@
   \centering
   \caption{コントローラーでの左右移動のボタン対応}
   \begin{tabular}{c|c}
+    \hline
     動作 & 対応するボタン\\
     \hline
     右に動く & 右方向ボタン \\
       & Lスティックを右に \\
     \hline
     左に動く & 左方向ボタン \\
-      & Lスティックを左に
+      & Lスティックを左に \\
+    \hline
   \end{tabular}
 \end{table}
 
@@ -92,7 +96,7 @@
 
 \newpage
 
-・左右移動-要求仕様
+・左右移動-仕様
 \begin{enumerate}
   \item 地面の上で左右に動く
   \item 空中で左右に動く
@@ -121,6 +125,7 @@
   \centering
   \caption{ジャンプボタンの対応}
   \begin{tabular}{c|c}
+    \hline
     端末 & キー/ボタン \\
     \hline
     PC & 上矢印キー \\
@@ -130,6 +135,7 @@
     コントローラー & Aボタン \\
       & 丸ボタン \\
       & Lスティック上入力 (要検討) \\
+      \hline
   \end{tabular}
 \end{table}
 
@@ -145,6 +151,208 @@
 実装するかどうか悩む〜〜〜〜
 
 って感じ
+
+\vspace{1em}
+
+・ジャンプ-仕様
+
+\begin{enumerate}
+  \item ジャンプボタンを押すと大学生が上に飛ぶ
+  \item 押す長さによって飛ぶ高さが変わる
+  \begin{enumerate}
+    \item 短く押すと最小の高さ (要調整)でジャンプする
+    \item ある程度までは、押すほど高さが伸びる
+    \item 一定の高さまで上昇すると、ボタンを押しても高さが伸びなくなる
+  \end{enumerate}
+  \item 上に天井などがあると、ぶつかってそれ以上上昇しない
+\end{enumerate}
+
+\newpage
+
+\subsubsection{エナドリ}
+
+エナドリボタンを押すと、押す長さによって特定のエナドリを投げる。
+
+押す時間の塩梅は実際にやってみて決める。
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{imags/enadoriPushDiscription.eps}
+    \caption{エナドリボタンを押す長さで、投げるものが変わる}
+  \end{center}
+\end{figure}
+
+
+\begin{table}[htbp]
+  \caption{エナドリボタンと操作割り当て}
+  \centering
+  \begin{tabular}{c|c}
+    \hline
+    端末 & 割り当て \\
+    \hline
+    PC & スペース \\
+      & Xキー \\
+      & Kキー \\
+    \hline
+    コントローラー & R1 \\
+      & R2 \\
+      & L1 \\
+      & L2 \\
+      & Xボタン \\
+      & Bボタン \\
+      & 三角ボタン \\
+      & バツボタン \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\newpage
+
+・エナドリ缶
+
+エナドリボタンを0〜0.6秒 (要調整) 押すと、エナドリ缶を投げる。
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{imags/enadoriKan.eps}
+    \caption{エナドリ缶を投げる大学生}
+  \end{center}
+\end{figure}
+
+\newpage
+
+・エナドリ缶の仕様
+
+\begin{enumerate}
+  \item 左右に投げられる
+  \item 投げたら、水平に飛んでいく
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width=8cm]{imags/enadoriKidou.eps}
+      \caption{エナドリ缶の軌道}
+    \end{center}
+  \end{figure}
+  \item 画面の端までいったら消える
+  \item 敵や、当たり判定のあるギミックに当たると、敵にダメージを与えて消える
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width=8cm]{imags/enadoriKanTeki.eps}
+      \caption{敵に当たるエナドリ缶}
+    \end{center}
+  \end{figure}
+
+  \newpage
+  \item エナドリボタンを押した回数だけエナドリ缶が出る
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width=8cm]{imags/enadoriKanMany.eps}
+      \caption{エナドリ缶をたくさん投げる主人公}
+    \end{center}
+  \end{figure}
+\end{enumerate}
+
+\newpage
+
+・エナドリ爆弾
+
+エナドリボタンを0.6〜1.6秒 (要調整) 押すと、大学生がエナドリ爆弾を投げる
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{imags/enadoriBakudan.eps}
+    \caption{エナドリ爆弾を投げる大学生}
+  \end{center}
+\end{figure}
+
+・エナドリ爆弾の仕様
+
+\begin{enumerate}
+  \item 左右に投げられる
+  \item エナドリ爆弾はちょっと落ちながら飛んでいく
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width=8cm]{imags/enadoriBakudanKidou.eps}
+    \end{center}
+    \caption{エナドリ爆弾の軌道}
+  \end{figure}
+
+  \item 敵や当たり判定のあるギミックに当たると、爆発する
+  \begin{enumerate}
+    \item 敵等に接触した瞬間に爆発する
+    \item 壁は貫通する (壁にあたっても爆発しない)
+    \item 爆発は、敵やギミックにダメージを与える
+  \end{enumerate}
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width=12cm]{imags/enadoriBakudanBakuhatu.eps}
+      \caption{爆発するエナドリ爆弾}
+    \end{center}
+  \end{figure}
+
+  \item エナドリ爆弾は、画面の中に何個でも出せる (画面の中で個数制限はない)
+
+  \item エナドリ爆弾を投げられる間、移動速度が90\%になる
+
+  (エナドリボタンを押し始めてから0.6〜1.6秒で、何も投げてない時)
+\end{enumerate}
+
+\newpage
+
+・マルチエナドリ爆弾
+
+エナドリボタン1.6〜2.6秒で、エナドリ爆弾を3個 (要調整) 投げる。
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{imags/tripleBakudan.eps}
+    \caption{マルチエナドリ爆弾を投げる大学生}
+  \end{center}
+\end{figure}
+
+\newpage
+
+・マルチエナドリの仕様
+\begin{enumerate}
+  \item 左右に投げられる
+  \item エナドリ爆弾を3個投げる
+  \item 投げる軌道は、少しずらす
+  一個はエナドリ爆弾と同じ、一個はちょっと高め、一個はちょっと低め
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width=12cm]{imags/tripleKidou.eps}
+      \caption{マルチエナドリの軌道}
+    \end{center}
+  \end{figure}
+  \item マルチエナドリを投げられる間、移動速度が80\% (要調整) になる
+\end{enumerate}
+
+\newpage
+
+・箱エナドリ
+
+エナドリボタンを2.6〜3.6秒押すと、箱エナドリを投げる。
+
+箱エナドリは、何かに当たると弾けて、小エナドリ爆弾を大量にばら撒く。
+
+小エナドリ爆弾は、それぞれ爆発する
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{imags/hakoEnadori.eps}
+    \caption{箱エナドリを投げる大学生}
+  \end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{imags/hakoEnadoriBakuha.eps}
+    \caption{箱エナドリの爆発の手順}
+  \end{center}
+\end{figure}
+
+\newpage
+
+
 
 
 \end{document}
