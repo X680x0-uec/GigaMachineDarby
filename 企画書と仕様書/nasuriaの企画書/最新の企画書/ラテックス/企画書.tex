@@ -4,6 +4,7 @@
 \lhead{\leftmark}
 \rhead{\today}
 
+\usepackage{booktabs}
 \usepackage{graphicx}
 
 \begin{document}
@@ -52,32 +53,32 @@
 \begin{table}[htbp]
   \centering
   \caption{PCでの左右移動のキー対応}
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     動作 & 対応するキー \\
-    \hline
+    \midrule
     右に動く & 右矢印キー \\
       & Dキー \\
-    \hline
+    \midrule
     左に動く & 左矢印キー \\
       & Aキー \\
-    \hline
+    \midrule
   \end{tabular}
 \end{table}
 
 \begin{table}[htbp]
   \centering
   \caption{コントローラーでの左右移動のボタン対応}
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     動作 & 対応するボタン\\
-    \hline
+    \midrule
     右に動く & 右方向ボタン \\
       & Lスティックを右に \\
-    \hline
+    \midrule
     左に動く & 左方向ボタン \\
       & Lスティックを左に \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -126,18 +127,18 @@
 \begin{table}[htbp]
   \centering
   \caption{ジャンプボタンの対応}
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     端末 & キー/ボタン \\
-    \hline
+    \toprule
     PC & 上矢印キー \\
       & Wキー \\
       & Jキー \\
-    \hline
+    \toprule
     コントローラー & Aボタン \\
       & 丸ボタン \\
       & Lスティック上入力 (要検討) \\
-      \hline
+      \toprule
   \end{tabular}
 \end{table}
 
@@ -188,14 +189,14 @@
 \begin{table}[htbp]
   \caption{エナドリボタンと操作割り当て}
   \centering
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     端末 & 割り当て \\
-    \hline
+    \midrule
     PC & スペース \\
       & Xキー \\
       & Kキー \\
-    \hline
+    \midrule
     コントローラー & R1 \\
       & R2 \\
       & L1 \\
@@ -204,7 +205,7 @@
       & Bボタン \\
       & 三角ボタン \\
       & バツボタン \\
-    \hline
+    \midrule
   \end{tabular}
 \end{table}
 
@@ -371,6 +372,5 @@
 \subsubsection{エナドリゾーン}
 
 エナドリゾーンとは
-...
 
 \end{document}
