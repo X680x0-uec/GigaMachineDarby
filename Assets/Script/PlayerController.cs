@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [Header("体力設定")]
     public int maxHealth = 100;
     private int currentHealth;
-    public Image hpBarFill;
+    [SerializeField] private Slider HPbar;
 
     private Rigidbody2D rb;
     private bool isGrounded = false;
@@ -107,9 +107,9 @@ public class PlayerController : MonoBehaviour
 
     void UpdateHPBar()
     {
-        if (hpBarFill != null)
+        if (HPbar != null)
         {
-            hpBarFill.fillAmount = (float)currentHealth / maxHealth;
+            HPbar.value = (float)currentHealth / maxHealth;
         }
     }
 

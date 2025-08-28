@@ -15,6 +15,10 @@ public class Enemy : MonoBehaviour
     public int maxHealth = 100;
     private int currentHealth;
 
+
+    [Header("HPバー UI（Fill Image）")]
+    [SerializeField] private Slider HPbar;
+
     [Header("HPバー UI")]
     public Image hpBarFill;
 
@@ -110,13 +114,13 @@ public class Enemy : MonoBehaviour
 
     private void UpdateHPBar()
     {
-        if (hpBarFill != null)
+        if (HPbar != null)
         {
-            hpBarFill.fillAmount = (float)currentHealth / maxHealth;
+            HPbar.value = (float)currentHealth / maxHealth;
         }
         else
         {
-            Debug.LogWarning($"{gameObject.name}: hpBarFill が設定されていません！");
+            Debug.LogWarning($"{gameObject.name}: hpBar が設定されていません！");
         }
     }
 
