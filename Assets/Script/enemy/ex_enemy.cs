@@ -4,14 +4,24 @@ using System;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("感知設定")]
+    public float detectionRadius = 3f; // 検知距離
+    public LayerMask playerLayer;      // プレイヤー用レイヤー
+
+    public bool IsDetected { get; private set; }
+    public GameObject DetectedPlayer { get; private set; }
+
     [Header("体力ステータス")]
     public int maxHealth = 100;
     private int currentHealth;
 
+
     [Header("HPバー UI（Fill Image）")]
     [SerializeField] private Slider HPbar;
 
-    // イベント（必要に応じて活用）
+    [Header("HPバー UI")]
+    public Image hpBarFill;
+
     public event Action OnDamaged;
     public event Action OnHealed;
     public event Action OnDied;
@@ -31,14 +41,49 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
         UpdateHPBar();
 
-        // Rigidbody2D と Animator を取得
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
 
+    private void Update()
+    {
+        DetectPlayer();
+    }
+
     /// <summary>
-    /// ダメージを受ける
+    /// 距離判定でプレイヤーを感知
     /// </summary>
+    private void DetectPlayer()
+    {
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, detectionRadius, playerLayer);
+
+        if (hit != null)
+        {
+            if (!IsDetected)
+                Debug.Log("プレイヤーを発見！");
+
+            IsDetected = true;
+            DetectedPlayer = hit.gameObject;
+        }
+        else
+        {
+            if (IsDetected)
+                Debug.Log("プレイヤーを見失った...");
+
+            IsDetected = false;
+            DetectedPlayer = null;
+        }
+    }
+
+    /// <summary>
+    /// 検知範囲をScene上で可視化
+    /// </summary>
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = IsDetected ? Color.red : Color.green;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+    }
+
     public void TakeDamage(int damage)
     {
         if (IsDead) return;
@@ -52,14 +97,10 @@ public class Enemy : MonoBehaviour
         if (currentHealth <= 0)
         {
             OnDied?.Invoke();
-
             Die(Vector2.zero);
         }
     }
 
-    /// <summary>
-    /// 回復処理
-    /// </summary>
     public void Heal(int amount)
     {
         if (IsDead) return;
@@ -71,9 +112,6 @@ public class Enemy : MonoBehaviour
         UpdateHPBar();
     }
 
-    /// <summary>
-    /// HPバー更新
-    /// </summary>
     private void UpdateHPBar()
     {
         if (HPbar != null)
@@ -92,32 +130,13 @@ public class Enemy : MonoBehaviour
 
         if (rb != null)
         {
-            rb.linearVelocity = Vector2.zero; // linearVelocityは存在しないため修正
+            rb.linearVelocity = Vector2.zero;
             rb.AddForce(direction.normalized * knockbackForce, ForceMode2D.Impulse);
         }
-
-        /*
-        if (animator != null)
-        {
-            animator.SetTrigger("Die"); // 死亡アニメーション（任意）
-        }
-        */
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
         Destroy(gameObject, deathDelay);
     }
-
-    /*
-    private void Move()
-    {
-        // 移動処理（後で実装）
-    }
-
-    private void Attack()
-    {
-        // 攻撃処理（後で実装）
-    }
-    */
 }
