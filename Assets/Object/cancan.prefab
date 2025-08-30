@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8373547030807170830}
   - component: {fileID: 887054025929408937}
   - component: {fileID: 5069264834661378124}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: cancan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,5 +174,5 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
