@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -10,6 +11,10 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
+    [SerializeField] private int jumpCount = 0;
+    [SerializeField] private int maxJumpCount = 2;
+    [SerializeField] private bool isInvincible = false;
+    [SerializeField] private float hitIntervalSec = 0.3f;
 
     [Header("ショット設定")]
     public GameObject boxPrefab;
@@ -30,6 +35,24 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         UpdateHPBar();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        //リセット
+        if (other.gameObject.CompareTag("floor"))
+        {
+            jumpCount = 0;
+        }
+    }
+
+    // ジャンプせず離れたときの空中2回ジャンプを防ぐ
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("floor"))
+        {
+            jumpCount = 1;
+        }
     }
 
     void Update()
@@ -62,6 +85,13 @@ public class PlayerController : MonoBehaviour
         {
             ThrowBox();
         }
+
+        //ジャンプ処理
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumpCount)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            jumpCount++;
+        }
     }
 
     void ThrowBox()
@@ -81,16 +111,24 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage, Vector2 hitDirection)
     {
-        if (isDead) return;
-
+        if (isDead || isInvincible) return;
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHPBar();
+
+        isInvincible = true;
+        StartCoroutine(InvincibleCoroutine());
 
         if (currentHealth <= 0)
         {
             Die();
         }
+    }
+
+    IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン (part5で追加)
+    {
+        yield return new WaitForSeconds(hitIntervalSec); // 指定した秒数待機
+        isInvincible = false; // 無敵状態を解除
     }
 
     void Die()
@@ -113,13 +151,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
+{
+    // groundCheckが設定されている場合のみ実行
+    if (groundCheck != null)
     {
-        // 地面判定の確認用
-        if (groundCheck != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-        }
+        // isGroundedがtrueなら緑、falseなら赤色に設定
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+
+        // UpdateのOverlapCircleと全く同じ位置・半径で円を描画する
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
+}
 }

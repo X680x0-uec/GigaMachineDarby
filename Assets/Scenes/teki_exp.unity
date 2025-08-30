@@ -221,7 +221,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc65d3e79797148428388ade2efc1d70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTransform: {fileID: 0}
   offset: {x: 0, y: 1.5, z: 0}
 --- !u!1 &101619116
 GameObject:
@@ -955,8 +954,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detectionRadius: 3
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
   maxHealth: 100
   HPbar: {fileID: 1624187042}
+  hpBarFill: {fileID: 0}
   knockbackForce: 5
   deathDelay: 0.5
 --- !u!1 &1189600254
@@ -1317,7 +1321,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

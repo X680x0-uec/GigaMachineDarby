@@ -12,8 +12,8 @@ public class Enemy : MonoBehaviour
     public GameObject DetectedPlayer { get; private set; }
 
     [Header("体力ステータス")]
-    public int maxHealth = 100;
-    private int currentHealth;
+    public int maxHP = 100;
+    private int currentHP;
 
 
     [Header("HPバー UI（Fill Image）")]
@@ -34,11 +34,11 @@ public class Enemy : MonoBehaviour
     private Animator animator;
     private bool isDead = false;
 
-    public bool IsDead => currentHealth <= 0;
+    public bool IsDead => currentHP <= 0;
 
     private void Start()
     {
-        currentHealth = maxHealth;
+        currentHP = maxHP;
         UpdateHPBar();
 
         rb = GetComponent<Rigidbody2D>();
@@ -88,13 +88,13 @@ public class Enemy : MonoBehaviour
     {
         if (IsDead) return;
 
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHP -= damage;
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
         OnDamaged?.Invoke();
         UpdateHPBar();
 
-        if (currentHealth <= 0)
+        if (currentHP <= 0)
         {
             OnDied?.Invoke();
             Die(Vector2.zero);
@@ -105,8 +105,8 @@ public class Enemy : MonoBehaviour
     {
         if (IsDead) return;
 
-        currentHealth += amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHP += amount;
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
         OnHealed?.Invoke();
         UpdateHPBar();
@@ -116,7 +116,15 @@ public class Enemy : MonoBehaviour
     {
         if (HPbar != null)
         {
-            HPbar.value = (float)currentHealth / maxHealth;
+            if (currentHP == maxHP)
+            {
+                HPbar.gameObject.SetActive(false);
+            }
+            else
+            {
+                HPbar.gameObject.SetActive(true);
+                HPbar.value = (float)currentHP / maxHP;
+            }
         }
         else
         {
