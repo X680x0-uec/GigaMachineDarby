@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //ジャンプ処理
-        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumpCount)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && jumpCount < maxJumpCount)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             jumpCount++;
