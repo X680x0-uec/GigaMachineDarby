@@ -309,10 +309,10 @@ GameObject:
   - component: {fileID: 261382854}
   - component: {fileID: 261382853}
   - component: {fileID: 261382852}
-  - component: {fileID: 261382851}
-  - component: {fileID: 261382850}
-  - component: {fileID: 261382849}
   - component: {fileID: 261382856}
+  - component: {fileID: 261382859}
+  - component: {fileID: 261382858}
+  - component: {fileID: 261382857}
   m_Layer: 7
   m_Name: Spring
   m_TagString: Untagged
@@ -320,60 +320,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &261382849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261382848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db694d63d66475f4794ea1a2e8195710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  HPbar: {fileID: 1167327493}
-  knockbackForce: 5
-  deathDelay: 0.5
-  speed: 4
-  jump: 5
-  JumpCount: 0
-  MaxJump: 3
---- !u!114 &261382850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261382848}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59e37e7142483174eb0f23d2c798b9ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 2.5
---- !u!114 &261382851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261382848}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRadius: 3
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  maxHP: 100
-  HPbar: {fileID: 1167327493}
-  hpBarFill: {fileID: 0}
-  knockbackForce: 5
-  deathDelay: 0.5
 --- !u!61 &261382852
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -555,6 +501,58 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0.21133333}
   m_Size: {x: 1, y: 1}
   m_Direction: 0
+--- !u!114 &261382857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261382848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d25eaf0d47b4364ebbef852bccedf47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 10
+--- !u!114 &261382858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261382848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 3
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  maxHP: 100
+  HPbar: {fileID: 1167327493}
+  hpBarFill: {fileID: 0}
+  knockbackForce: 5
+  deathDelay: 0.5
+--- !u!114 &261382859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261382848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db694d63d66475f4794ea1a2e8195710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MoveSpeed: 2
+  JumpForce: 5
+  MiniJumpForce: 5
+  JumpCount: 0
+  MaxJump: 3
+  target: 1
 --- !u!1 &300268886
 GameObject:
   m_ObjectHideFlags: 0
@@ -964,7 +962,7 @@ GameObject:
   - component: {fileID: 1040537542}
   m_Layer: 3
   m_Name: player_sample
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1033,7 +1031,7 @@ Transform:
   m_GameObject: {fileID: 1040537537}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.95, y: 0.82, z: 0}
+  m_LocalPosition: {x: 0, y: 0.82, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1126,7 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b251ab6dd2187488fd799117f97550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 7
   jumpForce: 12
   groundLayer:
     serializedVersion: 2
@@ -1388,7 +1386,7 @@ Transform:
   m_GameObject: {fileID: 1175922478}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.77, y: 2.33, z: 0}
+  m_LocalPosition: {x: 8, y: 2.33, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

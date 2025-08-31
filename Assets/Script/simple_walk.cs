@@ -17,7 +17,7 @@ public class EnemyMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        // Enemyスクリプトがプレイヤーを検知しているか確認
+        //Enemyスクリプトがプレイヤーを検知しているか確認
         if (enemy.IsDetected && enemy.DetectedPlayer != null)
         {
             MoveTowardsPlayer();
@@ -59,5 +59,17 @@ public class EnemyMovement : MonoBehaviour
             transform.localScale = new Vector3(-1, 1, 1);
         }
         // ほぼ停止している場合は何もしない
+    }
+
+    public void Jump(float JumpForce)
+    {
+        // 相対座標→正規化
+        float direction = (enemy.DetectedPlayer.transform.position.x - transform.position.x);
+        direction = direction < 0 ? -1 : 1;
+
+        rb.linearVelocity = new Vector2(direction * moveSpeed, JumpForce);
+
+        // 移動方向に応じてスプライトの向きを変える
+        FlipSprite(rb.linearVelocity.x);
     }
 }
