@@ -4,135 +4,101 @@ using System;
 
 public class Spring : MonoBehaviour
 {
-    [Header("体力ステータス")]
-    public int maxHealth = 100;
-    private int currentHealth;
-
-    [Header("HPバー UI（Fill Image）")]
-    [SerializeField] private Slider HPbar;
-
-    // イベント（必要に応じて活用）
-    public event Action OnDamaged;
-    public event Action OnHealed;
-    public event Action OnDied;
-
-    [Header("ノックバック設定")]
-    public float knockbackForce = 5f;
-    public float deathDelay = 0.5f;
-
-    private Rigidbody2D rb;
-    private Animator animator;
-    private bool isDead = false;
 
     [Header("移動設定")]
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private float jump = 5f;
-    [SerializeField] private int JumpCount = 0;
+    [SerializeField] private float MoveSpeed = 5f;
+    [SerializeField] private float JumpForce = 7f;
+    [SerializeField] private float MiniJumpForce = 4f;
+    [SerializeField] private int JumpCount = 1;
     [SerializeField] private int MaxJump = 3;
+    [SerializeField] bool target = true;
 
-    public bool IsDead => currentHealth <= 0;
+    private Rigidbody2D rb;
+    private Enemy enemy; //索敵やステータスを管理するスクリプト
 
     private void Start()
     {
-        currentHealth = maxHealth;
-        UpdateHPBar();
-
-        // Rigidbody2D と Animator を取得
+        // Rigidbody2D と Animator と を取得
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        enemy = GetComponent<Enemy>();
     }
 
-    private void Update()
+    //オブジェクトと接触した際targetの状態によって挙動を変更
+    void OnTriggerEnter2D(Collider2D other)
     {
+        if (target)
         {
-            rb.linearVelocity = new Vector2(-speed, rb.linearVelocityY);
-        }
-    }
-
-    /// <summary>
-    /// ダメージを受ける
-    /// </summary>
-    public void TakeDamage(int damage)
-    {
-        if (IsDead) return;
-
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-
-        OnDamaged?.Invoke();
-        UpdateHPBar();
-
-        if (currentHealth <= 0)
-        {
-            OnDied?.Invoke();
-
-            Die(Vector2.zero);
-        }
-    }
-
-    /// <summary>
-    /// 回復処理
-    /// </summary>
-    public void Heal(int amount)
-    {
-        if (IsDead) return;
-
-        currentHealth += amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-
-        OnHealed?.Invoke();
-        UpdateHPBar();
-    }
-
-    /// <summary>
-    /// HPバー更新
-    /// </summary>
-    private void UpdateHPBar()
-    {
-        if (HPbar != null)
-        {
-            HPbar.value = (float)currentHealth / maxHealth;
+            TargetSpring();
         }
         else
         {
-            Debug.LogWarning($"{gameObject.name}: hpBar が設定されていません！");
+            UnTargetSpring();
         }
     }
 
-    private void Die(Vector2 direction)
+    //右に一方通行で動く場合
+    private void UnTargetSpring()
     {
-        isDead = true;
-
-        if (rb != null)
+        if (JumpCount < MaxJump)
         {
-            rb.linearVelocity = Vector2.zero; // linearVelocityは存在しないため修正
-            rb.AddForce(direction.normalized * knockbackForce, ForceMode2D.Impulse);
-        }
-
-        /*
-        if (animator != null)
-        {
-            animator.SetTrigger("Die"); // 死亡アニメーション（任意）
-        }
-        */
-
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null) col.enabled = false;
-
-        Destroy(gameObject, deathDelay);
-    }
-
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (JumpCount != MaxJump)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, jump);
+            rb.linearVelocity = new Vector2(-MoveSpeed, JumpForce);
             JumpCount++;
-        }else if(JumpCount == MaxJump)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, 2*jump);
-            JumpCount = 0;
         }
+        else if (JumpCount == MaxJump)
+        {
+            rb.linearVelocity = new Vector2(-MoveSpeed, 2 * JumpForce);
+            JumpCount = 1;
+        }
+    }
+
+    //プレイヤーを追いかける場合
+    private void TargetSpring()
+    {
+        //プレイヤーが索敵範囲外の時その場ではねる
+        if (!enemy.IsDetected && enemy.DetectedPlayer == null)
+        {
+            rb.linearVelocity = new Vector2(0, MiniJumpForce);
+        }
+        //プレイヤーが索敵範囲の時追いかける
+        else if (enemy.IsDetected && enemy.DetectedPlayer != null)
+        {
+            if (JumpCount < MaxJump)
+            {
+                MoveTowardsPlayer(JumpForce);
+                JumpCount++;
+            }
+            else
+            {
+                MoveTowardsPlayer(2 * JumpForce);
+                JumpCount = 1;
+            }
+        }
+    }
+
+    private void MoveTowardsPlayer(float JumpForce)
+    {
+        // 相対座標→正規化
+        float direction = (enemy.DetectedPlayer.transform.position.x - transform.position.x);
+        direction = direction < 0 ? -1 : 1;
+
+        rb.linearVelocity = new Vector2(direction * MoveSpeed, JumpForce);
+
+        // 移動方向に応じてスプライトの向きを変える
+        FlipSprite(rb.linearVelocity.x);
+    }
+
+    private void FlipSprite(float horizontalVelocity)
+    {
+        // 速度が右向き（0より大きい）ならスプライトはそのまま
+        if (horizontalVelocity > 0.01f)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        // 速度が左向き（0より小さい）ならスプライトを反転させる
+        else if (horizontalVelocity < -0.01f)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        // ほぼ停止している場合は何もしない
     }
 }
