@@ -12,6 +12,12 @@ public class Spring : MonoBehaviour
     [SerializeField] private int JumpCount = 1;
     [SerializeField] private int MaxJump = 3;
     [SerializeField] bool target = true;
+    [SerializeField] bool NewModel = true;
+    private bool detect = false;
+    /*target == trueならば右にはねながら一方通行で動く
+    target == true かつ NewModel == falseなら検知範囲内にプレイヤーがいるときだけ追いかける
+    target == true かつ NewModel == trueなら一度検知範囲内でプレイヤーを検知したら追いかけ続ける
+    の3形態を用意しています*/
 
     private Rigidbody2D rb;
     private Enemy enemy; //索敵やステータスを管理するスクリプト
@@ -21,16 +27,24 @@ public class Spring : MonoBehaviour
         // Rigidbody2D と Animator と を取得
         rb = GetComponent<Rigidbody2D>();
         enemy = GetComponent<Enemy>();
+        if (target && !NewModel)
+        {
+            MoveSpeed *= 2;
+        }
     }
 
     //オブジェクトと接触した際targetの状態によって挙動を変更
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (target)
+        if (target && !NewModel)
         {
             TargetSpring();
         }
-        else
+        else if (target && NewModel)
+        {
+            NewModelSpring();
+        }
+        else if(!target)
         {
             UnTargetSpring();
         }
@@ -58,9 +72,39 @@ public class Spring : MonoBehaviour
         if (!enemy.IsDetected && enemy.DetectedPlayer == null)
         {
             rb.linearVelocity = new Vector2(0, MiniJumpForce);
+            enemy.detectionRadius = 5f;
         }
         //プレイヤーが索敵範囲の時追いかける
         else if (enemy.IsDetected && enemy.DetectedPlayer != null)
+        {
+            enemy.detectionRadius = 15f;
+            if (JumpCount < MaxJump)
+            {
+                MoveTowardsPlayer(JumpForce);
+                JumpCount++;
+            }
+            else
+            {
+                MoveTowardsPlayer(2 * JumpForce);
+                JumpCount = 1;
+            }
+        }
+    }
+
+    private void NewModelSpring()
+    {
+        if (!enemy.IsDetected && enemy.DetectedPlayer == null && !detect)
+        {
+            rb.linearVelocity = new Vector2(0, MiniJumpForce);
+        }
+        else if (enemy.IsDetected && enemy.DetectedPlayer != null && !detect)
+        {
+            detect = true;
+            enemy.detectionRadius = Mathf.Infinity;
+            MoveTowardsPlayer(JumpForce);
+            JumpCount++;
+        }
+        else if (detect)
         {
             if (JumpCount < MaxJump)
             {
