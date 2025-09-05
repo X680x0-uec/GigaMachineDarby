@@ -5,7 +5,7 @@ using System;
 public class Enemy : MonoBehaviour
 {
     [Header("感知設定")]
-    public float detectionRadius = 3f; // 検知距離
+    public float detectionRadius = 5f; // 検知距離
     public LayerMask playerLayer;      // プレイヤー用レイヤー
 
     public bool IsDetected { get; private set; }
@@ -61,7 +61,6 @@ public class Enemy : MonoBehaviour
         {
             if (!IsDetected)
                 Debug.Log("プレイヤーを発見！");
-
             IsDetected = true;
             DetectedPlayer = hit.gameObject;
         }
@@ -69,7 +68,6 @@ public class Enemy : MonoBehaviour
         {
             if (IsDetected)
                 Debug.Log("プレイヤーを見失った...");
-
             IsDetected = false;
             DetectedPlayer = null;
         }
