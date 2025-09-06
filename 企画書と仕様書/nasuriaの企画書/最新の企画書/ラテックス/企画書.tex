@@ -4,6 +4,7 @@
 \lhead{\leftmark}
 \rhead{\today}
 
+\usepackage{booktabs}
 \usepackage{graphicx}
 
 \begin{document}
@@ -52,32 +53,32 @@
 \begin{table}[htbp]
   \centering
   \caption{PCでの左右移動のキー対応}
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     動作 & 対応するキー \\
-    \hline
+    \midrule
     右に動く & 右矢印キー \\
       & Dキー \\
-    \hline
+    \midrule
     左に動く & 左矢印キー \\
       & Aキー \\
-    \hline
+    \midrule
   \end{tabular}
 \end{table}
 
 \begin{table}[htbp]
   \centering
   \caption{コントローラーでの左右移動のボタン対応}
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     動作 & 対応するボタン\\
-    \hline
+    \midrule
     右に動く & 右方向ボタン \\
       & Lスティックを右に \\
-    \hline
+    \midrule
     左に動く & 左方向ボタン \\
       & Lスティックを左に \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -86,12 +87,14 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/PCYajirusiKeyDiscription.eps}
-    \caption{PCの矢印キーと名前の対応}
   \end{center}
-  \begin{center}
+  \caption{PCの矢印キーと名前の対応}
+\end{figure}
+\begin{figure}
+    \begin{center}
     \includegraphics[width=12cm]{imags/ControllerBottunDiscription.eps}
-    \caption{コントローラーのボタンと名前の対応}
   \end{center}
+  \caption{コントローラーのボタンと名前の対応}
 \end{figure}
 
 \newpage
@@ -115,8 +118,8 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[height=10cm]{imags/jumpDiscription.eps}
-    \caption{ジャンプする大学生}
   \end{center}
+  \caption{ジャンプする大学生}
 \end{figure}
 
 \newpage
@@ -124,18 +127,18 @@
 \begin{table}[htbp]
   \centering
   \caption{ジャンプボタンの対応}
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     端末 & キー/ボタン \\
-    \hline
+    \toprule
     PC & 上矢印キー \\
       & Wキー \\
       & Jキー \\
-    \hline
+    \toprule
     コントローラー & Aボタン \\
       & 丸ボタン \\
       & Lスティック上入力 (要検討) \\
-      \hline
+      \toprule
   \end{tabular}
 \end{table}
 
@@ -178,22 +181,22 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/enadoriPushDiscription.eps}
-    \caption{エナドリボタンを押す長さで、投げるものが変わる}
   \end{center}
+  \caption{エナドリボタンを押す長さで、投げるものが変わる}
 \end{figure}
 
 
 \begin{table}[htbp]
   \caption{エナドリボタンと操作割り当て}
   \centering
-  \begin{tabular}{c|c}
-    \hline
+  \begin{tabular}{cc}
+    \toprule
     端末 & 割り当て \\
-    \hline
+    \midrule
     PC & スペース \\
       & Xキー \\
       & Kキー \\
-    \hline
+    \midrule
     コントローラー & R1 \\
       & R2 \\
       & L1 \\
@@ -202,7 +205,7 @@
       & Bボタン \\
       & 三角ボタン \\
       & バツボタン \\
-    \hline
+    \midrule
   \end{tabular}
 \end{table}
 
@@ -215,8 +218,8 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/enadoriKan.eps}
-    \caption{エナドリ缶を投げる大学生}
   \end{center}
+  \caption{エナドリ缶を投げる大学生}
 \end{figure}
 
 \newpage
@@ -260,8 +263,8 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/enadoriBakudan.eps}
-    \caption{エナドリ爆弾を投げる大学生}
   \end{center}
+  \caption{エナドリ爆弾を投げる大学生}
 \end{figure}
 
 ・エナドリ爆弾の仕様
@@ -305,8 +308,8 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/tripleBakudan.eps}
-    \caption{マルチエナドリ爆弾を投げる大学生}
   \end{center}
+  \caption{マルチエナドリ爆弾を投げる大学生}
 \end{figure}
 
 \newpage
@@ -320,8 +323,8 @@
   \begin{figure}[htbp]
     \begin{center}
       \includegraphics[width=12cm]{imags/tripleKidou.eps}
-      \caption{マルチエナドリの軌道}
     \end{center}
+    \caption{マルチエナドリの軌道}
   \end{figure}
   \item マルチエナドリを投げられる間、移動速度が80\% (要調整) になる
 \end{enumerate}
@@ -339,20 +342,35 @@
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/hakoEnadori.eps}
-    \caption{箱エナドリを投げる大学生}
   \end{center}
+  \caption{箱エナドリを投げる大学生}
 \end{figure}
 
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12cm]{imags/hakoEnadoriBakuha.eps}
-    \caption{箱エナドリの爆発の手順}
   \end{center}
+  \caption{箱エナドリの爆発の手順}
 \end{figure}
 
 \newpage
 
+・エナドリ箱の仕様
 
+\begin{enumerate}
+  \item 左右に投げられる
+  \item 箱状態で投げられ、壁、床、敵に当たると、はじける
+  \item 小エナドリ爆弾をばら撒く
+  \item 小エナドリ爆弾は、2秒くらい (要調整) すると爆発する
+  \item エナドリ箱が当たると、敵にダメージを与える
+  (ダメージを与えてから分裂する)
+  \item 小エナドリ爆弾も、爆風が当たるとダメージを与える
+\end{enumerate}
 
+\newpage
+
+\subsubsection{エナドリゾーン}
+
+エナドリゾーンとは
 
 \end{document}

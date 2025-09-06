@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
+
+    [SerializeField] private int jumpCount = 0;
+    [SerializeField] private int maxJumpCount = 2;
+
     [SerializeField] private bool isInvincible = false;
     [SerializeField] private float hitIntervalSec = 0.3f;
 
@@ -35,6 +39,25 @@ public class PlayerController : MonoBehaviour
         UpdateHPBar();
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        //リセット
+        if (other.gameObject.CompareTag("floor"))
+        {
+            jumpCount = 0;
+        }
+    }
+
+    // ジャンプせず離れたときの空中2回ジャンプを防ぐ
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("floor"))
+        {
+            jumpCount = 1;
+        }
+    }
+
+
     void Update()
     {
         if (isDead) return;
@@ -54,6 +77,7 @@ public class PlayerController : MonoBehaviour
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
+
          if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);// 上に移動
@@ -65,10 +89,19 @@ public class PlayerController : MonoBehaviour
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);// まだ上昇中ならジャンプをカット
             }
         }
+
+
         // ショット（スペースキー）
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ThrowBox();
+        }
+
+        //ジャンプ処理
+        if (Input.GetKeyDown(KeyCode.UpArrow) && jumpCount < maxJumpCount)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            jumpCount++;
         }
     }
 
@@ -96,6 +129,7 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(transform.up * 400.0f);
         rb.AddForce(transform.right * -400.0f);
 
+
         isInvincible = true;
         StartCoroutine(InvincibleCoroutine());
 
@@ -105,7 +139,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン
+    IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン (part5で追加)
+
     {
         yield return new WaitForSeconds(hitIntervalSec); // 指定した秒数待機
         isInvincible = false; // 無敵状態を解除
