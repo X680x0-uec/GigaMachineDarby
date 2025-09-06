@@ -11,8 +11,10 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
+
     [SerializeField] private int jumpCount = 0;
     [SerializeField] private int maxJumpCount = 2;
+
     [SerializeField] private bool isInvincible = false;
     [SerializeField] private float hitIntervalSec = 0.3f;
 
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     void Update()
     {
         if (isDead) return;
@@ -74,11 +77,19 @@ public class PlayerController : MonoBehaviour
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // ジャンプ（上キー）
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
+
+         if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);// 上に移動
         }
+        if (Input.GetKeyUp(KeyCode.UpArrow))// 上矢印キーが離されたとき
+        {
+            if (rb.linearVelocity.y > 0)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);// まだ上昇中ならジャンプをカット
+            }
+        }
+
 
         // ショット（スペースキー）
         if (Input.GetKeyDown(KeyCode.Space))
@@ -115,6 +126,9 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHPBar();
+        rb.AddForce(transform.up * 400.0f);
+        rb.AddForce(transform.right * -400.0f);
+
 
         isInvincible = true;
         StartCoroutine(InvincibleCoroutine());
@@ -126,6 +140,7 @@ public class PlayerController : MonoBehaviour
     }
 
     IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン (part5で追加)
+
     {
         yield return new WaitForSeconds(hitIntervalSec); // 指定した秒数待機
         isInvincible = false; // 無敵状態を解除
