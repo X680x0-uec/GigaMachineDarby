@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    void Update()
+    void Update()//アップデート
     {
         if (isDead) return;
 
