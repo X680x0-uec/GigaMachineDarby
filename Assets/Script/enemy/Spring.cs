@@ -14,7 +14,7 @@ public class Spring : MonoBehaviour
     [SerializeField] bool target = true;
     [SerializeField] bool NewModel = true;
     private bool detect = false;
-    /*target == trueならば右にはねながら一方通行で動く
+    /*target == trueならば左にはねながら一方通行で動く
     target == true かつ NewModel == falseなら検知範囲内にプレイヤーがいるときだけ追いかける
     target == true かつ NewModel == trueなら一度検知範囲内でプレイヤーを検知したら追いかけ続ける
     の3形態を用意しています*/
