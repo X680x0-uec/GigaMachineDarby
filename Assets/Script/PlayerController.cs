@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
 
-    [SerializeField] private int jumpCount = 0;
-    [SerializeField] private int maxJumpCount = 2;
+    //[SerializeField] private int jumpCount = 0;
+    //[SerializeField] private int maxJumpCount = 2;
 
     [SerializeField] private bool isInvincible = false;
     [SerializeField] private float hitIntervalSec = 0.3f;
@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
         UpdateHPBar();
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    /*void OnTriggerEnter2D(Collider2D other)
     {
         //リセット
         if (other.gameObject.CompareTag("floor"))
@@ -55,8 +55,7 @@ public class PlayerController : MonoBehaviour
         {
             jumpCount = 1;
         }
-    }
-
+    }*/
 
     void Update()//アップデート
     {
@@ -98,10 +97,10 @@ public class PlayerController : MonoBehaviour
         }
 
         //ジャンプ処理
-        if (Input.GetKeyDown(KeyCode.UpArrow) && jumpCount < maxJumpCount)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded /*&& jumpCount < maxJumpCount*/)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            jumpCount++;
+            //jumpCount++;
         }
     }
 
@@ -154,7 +153,6 @@ public class PlayerController : MonoBehaviour
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
-
         Debug.Log("Player Died");
     }
 
