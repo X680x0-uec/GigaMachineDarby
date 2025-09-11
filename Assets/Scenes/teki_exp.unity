@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 261382857}
   m_Layer: 7
   m_Name: Spring
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1068,8 +1068,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1189600255}
-  - {fileID: 853294362}
   - {fileID: 27971304}
+  - {fileID: 853294362}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1040537540
@@ -1275,7 +1275,7 @@ GameObject:
   - component: {fileID: 1175922484}
   m_Layer: 7
   m_Name: Triangle
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2290,7 +2290,7 @@ GameObject:
   - component: {fileID: 2138189555}
   - component: {fileID: 2138189554}
   m_Layer: 6
-  m_Name: Square
+  m_Name: ground
   m_TagString: floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

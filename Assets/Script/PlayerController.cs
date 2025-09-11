@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour
     public GameObject boxPrefab;
     public Transform throwPoint;
     public float throwForce = 10f;
+    private float spacePressTime;     // スペースを押し始めた時間
+    private float holdTime;
+
 
     [Header("体力設定")]
     public int maxHealth = 100;
@@ -89,26 +92,48 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
-        // ショット（スペースキー）
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ThrowBox();
+            spacePressTime = Time.time;
         }
+        // ショット（スペースキー）
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            holdTime = Time.time - spacePressTime; // 押していた時間を計算
+            if (holdTime >= 1.6f)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    ThrowBox(true);
+                }
+            }
+            else if (holdTime >= 0.6f)
+            {
+                ThrowBox(true);
+            }
+            else
+            {
+                ThrowBox(false);
+            }
+        }
+
+
 
         //ジャンプ処理
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded /*&& jumpCount < maxJumpCount*/)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            //jumpCount++;
-        }
+            if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded /*&& jumpCount < maxJumpCount*/)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                //jumpCount++;
+            }
     }
 
-    void ThrowBox()
+    void ThrowBox(bool explosive)
     {
         if (boxPrefab != null && throwPoint != null)
         {
             GameObject box = Instantiate(boxPrefab, throwPoint.position, Quaternion.identity);
+            // 爆発フラグを渡す
+            BoxBehavior boxBehavior = box.GetComponent<BoxBehavior>();
             Rigidbody2D boxRb = box.GetComponent<Rigidbody2D>();
 
             if (boxRb != null)
