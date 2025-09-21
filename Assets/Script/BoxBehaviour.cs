@@ -14,7 +14,8 @@ public class BoxBehavior : MonoBehaviour
 
                 if (explosionPrefab != null)
                 {
-                    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                    GameObject explosion=Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                    Destroy(explosion, 1f);
                 }
                 else
                 {
