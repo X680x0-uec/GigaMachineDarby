@@ -14,7 +14,7 @@ public class BoxBehavior : MonoBehaviour
 
                 if (explosionPrefab != null)
                 {
-                    GameObject explosion=Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                    GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
                     Destroy(explosion, 1f);
                 }
                 else
@@ -24,6 +24,10 @@ public class BoxBehavior : MonoBehaviour
 
                 Destroy(gameObject);
             }
+        }
+        else if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(gameObject);
         }
     }
 }

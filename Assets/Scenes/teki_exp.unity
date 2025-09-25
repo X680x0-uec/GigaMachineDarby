@@ -1087,7 +1087,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 7
-  jumpForce: 12
+  jumpForce: 15
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1166,7 +1166,8 @@ MonoBehaviour:
   groundCheckRadius: 0.1
   isInvincible: 0
   hitIntervalSec: 0.3
-  boxPrefab: {fileID: 6558356068717419739, guid: d3a30ddbc2e8c444a9b0880d12c7c7a0, type: 3}
+  canprefab: {fileID: 6558356068717419739, guid: d3a30ddbc2e8c444a9b0880d12c7c7a0, type: 3}
+  boxPrefab: {fileID: 3835662915859539639, guid: d42f224ba1a81434292b3664b34f4ec0, type: 3}
   throwPoint: {fileID: 1189600255}
   throwForce: 10
   maxHealth: 100
