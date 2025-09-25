@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float hitIntervalSec = 0.3f;
 
     [Header("ショット設定")]
+    public GameObject canprefab;
     public GameObject boxPrefab;
     public Transform throwPoint;
     public float throwForce = 10f;
@@ -100,24 +101,27 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             holdTime = Time.time - spacePressTime; // 押していた時間を計算
-            if (holdTime >= 1.6f)
+            if (holdTime >= 2.6f)
+            {
+                ThrowBox(false,true);
+
+            }
+            else if (holdTime >= 1.6f)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    ThrowBox(true);
+                    ThrowBox(true,false);
                 }
             }
             else if (holdTime >= 0.6f)
             {
-                ThrowBox(true);
+                ThrowBox(true,false);
             }
             else
             {
-                ThrowBox(false);
+                ThrowBox(false,false);
             }
         }
-
-
 
         //ジャンプ処理
             if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded /*&& jumpCount < maxJumpCount*/)
@@ -127,19 +131,26 @@ public class PlayerController : MonoBehaviour
             }
     }
 
-    void ThrowBox(bool explosive)
+    void ThrowBox(bool explosive, bool isBox)
     {
         if (boxPrefab != null && throwPoint != null)
         {
-            GameObject box = Instantiate(boxPrefab, throwPoint.position, Quaternion.identity);
-            // 爆発フラグを渡す
-            BoxBehavior boxBehavior = box.GetComponent<BoxBehavior>();
-            Rigidbody2D boxRb = box.GetComponent<Rigidbody2D>();
-
-            if (boxRb != null)
+            GameObject prefabToThrow = isBox ? boxPrefab : canprefab;
             {
-                float direction = transform.localScale.x >= 0 ? 1f : -1f;
-                boxRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
+                GameObject box = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
+                // 爆発フラグを渡す
+                BoxBehavior boxBehavior = box.GetComponent<BoxBehavior>();
+                if (boxBehavior != null)
+                {
+                    boxBehavior.isExplosive = explosive;
+                }
+                Rigidbody2D boxRb = box.GetComponent<Rigidbody2D>();
+
+                if (boxRb != null)
+                {
+                    float direction = transform.localScale.x >= 0 ? 1f : -1f;
+                    boxRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
+                }
             }
         }
     }
@@ -152,7 +163,6 @@ public class PlayerController : MonoBehaviour
         UpdateHPBar();
         rb.AddForce(transform.up * 400.0f);
         rb.AddForce(transform.right * -400.0f);
-
 
         isInvincible = true;
         StartCoroutine(InvincibleCoroutine());
