@@ -421,9 +421,9 @@ GameObject:
   - component: {fileID: 8359341011314855715}
   - component: {fileID: 5919842393750181659}
   - component: {fileID: 4278828972001135583}
-  - component: {fileID: 5477752759033682504}
   - component: {fileID: 1868361009910950241}
   - component: {fileID: 7537237986208836930}
+  - component: {fileID: 3171584598986720020}
   m_Layer: 7
   m_Name: Hammer
   m_TagString: Untagged
@@ -580,27 +580,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
---- !u!114 &5477752759033682504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8926445700445100236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2657f75cb329f14d9aa3e2e31f25e05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRadius: 5
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  maxHP: 100
-  HPbar: {fileID: 6459045708070966376}
-  hpBarFill: {fileID: 0}
-  knockbackForce: 5
-  deathDelay: 0.5
 --- !u!61 &1868361009910950241
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -663,3 +642,24 @@ MonoBehaviour:
   throwPoint: {fileID: 3275142344717032261}
   throwForce: 10
   ThrowInterval: 2
+--- !u!114 &3171584598986720020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8926445700445100236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  maxHP: 100
+  HPbar: {fileID: 6459045708070966376}
+  hpBarFill: {fileID: 7948050429816589148}
+  knockbackForce: 5
+  deathDelay: 0.5
