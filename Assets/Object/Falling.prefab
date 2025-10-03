@@ -163,9 +163,9 @@ GameObject:
   - component: {fileID: 8998355694165660540}
   - component: {fileID: 4610843201161953770}
   - component: {fileID: 2915791604032950018}
-  - component: {fileID: 4202444952367629338}
   - component: {fileID: 3540073642540702785}
-  - component: {fileID: 7786495797348812899}
+  - component: {fileID: 215426670618764746}
+  - component: {fileID: 4853665623019632983}
   m_Layer: 0
   m_Name: Falling
   m_TagString: Untagged
@@ -321,27 +321,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
---- !u!114 &4202444952367629338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818068162038002524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2657f75cb329f14d9aa3e2e31f25e05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRadius: 5
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  maxHP: 100
-  HPbar: {fileID: 955204592587515136}
-  hpBarFill: {fileID: 0}
-  knockbackForce: 5
-  deathDelay: 0.5
 --- !u!61 &3540073642540702785
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -388,7 +367,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7786495797348812899
+--- !u!114 &215426670618764746
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -397,7 +376,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1818068162038002524}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d15f2cf76832535408065b9652b468a7, type: 3}
+  m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  maxHP: 100
+  HPbar: {fileID: 955204592587515136}
+  hpBarFill: {fileID: 7025223632676026776}
+  knockbackForce: 5
+  deathDelay: 0.5
+--- !u!114 &4853665623019632983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818068162038002524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b3cac858689f24a83ed8b3a6f4dce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   falling_speed: 6
