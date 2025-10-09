@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.EventSystems.EventTrigger;
-
+using System.Collections;
 
 public class Stretch : MonoBehaviour
 {
@@ -21,6 +21,9 @@ public class Stretch : MonoBehaviour
     private float x;
     private float y;
 
+    private bool IsAttacking = false;
+
+    private Coroutine attackCoroutine;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -38,7 +41,7 @@ public class Stretch : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void FixedUpdate()
+    private void Update()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
@@ -49,23 +52,26 @@ public class Stretch : MonoBehaviour
         }
         else if (enemy.IsDetected && enemy.DetectedPlayer != null)
         {
-            x = player.position.x + transform.position.x;
-            y = player.position.y + transform.position.y;
-            if (distanceToPlayer < 3f)
+            if (!IsAttacking)
             {
-                Vector3 direction = player.position - transform.position;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                AttackTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-                AttackTransform.position = new Vector3(x / 2f, y / 2f, 0f);
-                AttackTransform.localScale = new Vector3(distanceToPlayer, 0.25f, 1f);
-            }
-            else
-            {
-                AttackTransform.position = new Vector3(transform.position.x, transform.position.y, 0f);
-                AttackTransform.localScale = new Vector3(0.25f, 0.25f, 1f);
+                attackCoroutine = StartCoroutine(attack(distanceToPlayer));
             }
         }
     }
 
-
+    IEnumerator attack(float distanceToPlayer)
+    {
+        x = player.position.x + transform.position.x;
+        y = player.position.y + transform.position.y;
+        Vector3 direction = player.position - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        AttackTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        AttackTransform.position = new Vector3(x / 2f, y / 2f, 0f);
+        AttackTransform.localScale = new Vector3(distanceToPlayer, 0.25f, 1f);
+        IsAttacking = true;
+        yield return new WaitForSeconds(1.0f);
+        IsAttacking = false;
+        AttackTransform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+        AttackTransform.localScale = new Vector3(0.25f, 0.25f, 1f);
+    }
 }
