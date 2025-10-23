@@ -11,7 +11,7 @@ public class Istrigger_contact : MonoBehaviour
         {
             player.TakeDamage(damage, Vector2.zero);
 
-            Debug.Log("Player‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚Ü‚µ‚½");
+            Debug.Log("Playerï¿½Éƒ_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½");
         }
 
     }
