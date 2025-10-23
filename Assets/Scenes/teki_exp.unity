@@ -629,9 +629,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2166546059434710361, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: JumpForce
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2166546059434710361, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: MoveSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3067748872996389313, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3153206554513372563, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
       propertyPath: m_Name
       value: TargetSpring
+      objectReference: {fileID: 0}
+    - target: {fileID: 3153206554513372563, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3200061130384571741, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528967064432717445, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3938431131188299790, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590619753268056333, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861089205185975364, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6800955384597048715, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
       propertyPath: m_AnchorMax.x
@@ -640,6 +676,10 @@ PrefabInstance:
     - target: {fileID: 6800955384597048715, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882237098202817845, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7168222735690914795, guid: b5146dea462c61f4abfe234e5ec45729, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1980,7 +2020,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 30
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
