@@ -1192,7 +1192,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1274,7 +1274,7 @@ MonoBehaviour:
   canprefab: {fileID: 6558356068717419739, guid: e97440203cf2ca24aad9627b977f54dd, type: 3}
   boxPrefab: {fileID: 3835662915859539639, guid: d42f224ba1a81434292b3664b34f4ec0, type: 3}
   throwPoint: {fileID: 1189600255}
-  throwForce: 10
+  throwForce: 15
   maxHealth: 100
   HPbar: {fileID: 94725046}
 --- !u!1 &1167327492
