@@ -100,60 +100,60 @@ public class PlayerController : MonoBehaviour
         // ショット（スペースキー）
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            holdTime = Time.time - spacePressTime; // 押していた時間を計算
+            holdTime = Time.time - spacePressTime;
+
             if (holdTime >= 2.6f)
             {
-                ThrowBox(false,true);
-
+                ThrowBox(false, true, new Vector2(1f, 0.25f));
             }
             else if (holdTime >= 1.6f)
             {
-                for (int i = 0; i < 3; i++)
-                {
-                    ThrowBox(true,false);
-                }
+                // 中押し → 缶3つを投げる（上・中・下）
+                ThrowBox(true, false, new Vector2(1f, 0.8f));   // 上方向
+                ThrowBox(true, false, new Vector2(1f, 0.1f));     // 真横
+                ThrowBox(true, false, new Vector2(1f, -0.05f));  // 下方向
             }
             else if (holdTime >= 0.6f)
             {
-                ThrowBox(true,false);
+                // 少し押し → 缶1つを真横に飛ばす
+                ThrowBox(true, false, new Vector2(1f, 0.25f));
             }
             else
             {
-                ThrowBox(false,false);
+                // 短押し → 爆発しない缶を真横に飛ばす
+                ThrowBox(false, false, new Vector2(1f, 0.25f));
             }
         }
-
-        //ジャンプ処理
-            if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded /*&& jumpCount < maxJumpCount*/)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                //jumpCount++;
-            }
     }
 
-    void ThrowBox(bool explosive, bool isBox)
+   void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
     {
-        if (boxPrefab != null && throwPoint != null)
-        {
-            GameObject prefabToThrow = isBox ? boxPrefab : canprefab;
-            {
-                GameObject box = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
-                // 爆発フラグを渡す
-                BoxBehavior boxBehavior = box.GetComponent<BoxBehavior>();
-                if (boxBehavior != null)
-                {
-                    boxBehavior.isExplosive = explosive;
-                }
-                Rigidbody2D boxRb = box.GetComponent<Rigidbody2D>();
+    GameObject prefabToThrow = isBox ? boxPrefab : canprefab;
+    if (prefabToThrow == null || throwPoint == null) return;
 
-                if (boxRb != null)
-                {
-                    float direction = transform.localScale.x >= 0 ? 1f : -1f;
-                    boxRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
-                }
+    GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
+
+    // 爆発フラグを渡す
+    BoxBehavior behavior = obj.GetComponent<BoxBehavior>();
+    if (behavior != null)
+        {
+            behavior.isExplosive = explosive;
+        }
+        Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
+        if (objRb != null)
+        {
+            float direction = transform.localScale.x >= 0 ? 1f : -1f;
+            if (Mathf.Abs(throwDir.y) > 0.05f)
+            {
+                objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized* throwForce, ForceMode2D.Impulse);
+            }
+            else {
+                objRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
             }
         }
     }
+
+
 
     public void TakeDamage(int damage, Vector2 hitDirection)
     {
