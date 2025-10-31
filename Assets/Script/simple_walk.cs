@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Rigidbody2DとEnemyスクリプトが必須であることを示す
-public class EnemyMovement : MonoBehaviour
+public class Simple_walk : MonoBehaviour
 {
     [Header("移動設定")]
     [SerializeField] private float moveSpeed = 2.5f; // 敵の移動速度
@@ -10,7 +10,7 @@ public class EnemyMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Enemy enemy; //索敵やステータスを管理するスクリプト
 
-    private void Awake()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         enemy = GetComponent<Enemy>();
@@ -18,13 +18,13 @@ public class EnemyMovement : MonoBehaviour
     private void FixedUpdate()
     {
         //Enemyスクリプトがプレイヤーを検知しているか確認
+        if (enemy == null)
+        {
+            return;
+        }
         if (enemy.IsDetected && enemy.DetectedPlayer != null)
         {
             MoveTowardsPlayer();
-        }
-        else
-        {
-            StopMoving();
         }
     }
 
