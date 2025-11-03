@@ -18,7 +18,7 @@ public class Falling : MonoBehaviour
     [SerializeField] private float rising_speed = 3.0f;
     float start_x;
     float start_y;
-    private Vector2 currentVelocity; //座標の変更用
+    //private Vector2 currentVelocity; //座標の変更用
     private Vector2 target;
 
 
@@ -29,7 +29,7 @@ public class Falling : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         enemy = GetComponent<Enemy>();
         rb.bodyType = RigidbodyType2D.Static; //ほかオブジェクトと衝突した際にfallingが押し出されないようにする
-        rb.constraints = RigidbodyConstraints2D.FreezePosition;
+        //rb.constraints = RigidbodyConstraints2D.FreezePosition;
         float start_x = transform.position.x;
         float start_y = transform.position.y;
         target.x = start_x;
@@ -37,7 +37,7 @@ public class Falling : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate ()
     {
         if (!falled)
         {
@@ -54,20 +54,23 @@ public class Falling : MonoBehaviour
                 }
                 if (falling)
                 {
+                    Debug.Log("ok");
                     rb.bodyType = RigidbodyType2D.Dynamic;
-                    currentVelocity.y = falling_speed;
-                    transform.position -= (Vector3)currentVelocity * Time.deltaTime;
+                    //currentVelocity.y = falling_speed;
+                    //transform.position -= (Vector3)currentVelocity * Time.deltaTime;
+                    //rb.linearVelocity = new Vector2(0, -falling_speed);
+                    rb.AddForce(Vector2.down * falling_speed);
                 }
             }
         }
         else
         {
-            transform.position = Vector2.MoveTowards(
-                transform.position,
-                target,
-                rising_speed * Time.deltaTime);
-
-            if ((Vector2)transform.position == target)
+            //transform.position = Vector2.MoveTowards(
+            //    transform.position,
+            //    target,
+            //    rising_speed * Time.deltaTime);
+            rb.linearVelocity = Vector2.up * rising_speed;
+            if (transform.position.y >= target.y)
             {
                 falled = false;
                 rb.bodyType = RigidbodyType2D.Static;
@@ -77,7 +80,7 @@ public class Falling : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("floor"))
+        if (other.gameObject.CompareTag("floor") || other.gameObject.CompareTag("Player"))
         {
             falling = false;
             falled = true;

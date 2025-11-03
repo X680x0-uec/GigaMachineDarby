@@ -36,13 +36,20 @@ public class Enemy : MonoBehaviour
 
     public bool IsDead => currentHP <= 0;
 
-    private void Start()
+    private DeathHandler deathHandler;
+    private void Awake()
     {
-        currentHP = maxHP;
-        UpdateHPBar();
-
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        deathHandler = GetComponent<DeathHandler>();
+    }
+    private void Start()
+    {
+    if (currentHP <= 0)
+        {
+            currentHP = maxHP;
+        }
+        UpdateHPBar();
     }
 
     private void Update()
@@ -132,6 +139,11 @@ public class Enemy : MonoBehaviour
 
     private void Die(Vector2 direction)
     {
+        //分裂する敵にのみ死亡処理を別のスクリプトで処理させる
+        if (deathHandler != null && deathHandler.TryHandleDeath(direction))
+        {
+            return;
+        }
         isDead = true;
 
         if (rb != null)
@@ -144,5 +156,11 @@ public class Enemy : MonoBehaviour
         if (col != null) col.enabled = false;
 
         Destroy(gameObject, deathDelay);
+    }
+    public void InitializeForSplit(int newMaxHP)
+    {
+        maxHP = newMaxHP;
+        currentHP = maxHP;
+        UpdateHPBar();
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BoxBehavior : MonoBehaviour
+public class EnemyBoxBehavior : MonoBehaviour
 {
     public bool isExplosive = false;
     public GameObject explosionPrefab;
@@ -9,7 +9,7 @@ public class BoxBehavior : MonoBehaviour
     {
         if (isExplosive)
         {
-            if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("Enemy"))
+            if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("Player"))
             {
 
                 if (explosionPrefab != null)
@@ -25,9 +25,13 @@ public class BoxBehavior : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        else if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("Enemy"))
+        else if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("Player"))
         {
-            Destroy(gameObject);
+            Invoke("Destroy", 0.1f);
         }
+    }
+    private void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

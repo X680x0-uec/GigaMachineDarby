@@ -5,7 +5,7 @@ using System;
 public class Spring : MonoBehaviour
 {
 
-    [Header("ˆÚ“®İ’è")]
+    [Header("ï¿½Ú“ï¿½ï¿½İ’ï¿½")]
     [SerializeField] private float MoveSpeed = 5f;
     [SerializeField] private float JumpForce = 7f;
     [SerializeField] private float MiniJumpForce = 4f;
@@ -14,17 +14,17 @@ public class Spring : MonoBehaviour
     [SerializeField] bool target = true;
     [SerializeField] bool NewModel = true;
     private bool detect = false;
-    /*target == true‚È‚ç‚Î¶‚É‚Í‚Ë‚È‚ª‚çˆê•û’Ês‚Å“®‚­
-    target == true ‚©‚Â NewModel == false‚È‚çŒŸ’m”ÍˆÍ“à‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é‚Æ‚«‚¾‚¯’Ç‚¢‚©‚¯‚é
-    target == true ‚©‚Â NewModel == true‚È‚çˆê“xŒŸ’m”ÍˆÍ“à‚ÅƒvƒŒƒCƒ„[‚ğŒŸ’m‚µ‚½‚ç’Ç‚¢‚©‚¯‘±‚¯‚é
-    ‚Ì3Œ`‘Ô‚ğ—pˆÓ‚µ‚Ä‚¢‚Ü‚·*/
+    /*target == trueï¿½È‚ï¿½Îï¿½ï¿½É‚Í‚Ë‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êsï¿½Å“ï¿½ï¿½ï¿½
+    target == true ï¿½ï¿½ï¿½ï¿½ NewModel == falseï¿½È‚çŒŸï¿½mï¿½ÍˆÍ“ï¿½ï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    target == true ï¿½ï¿½ï¿½ï¿½ NewModel == trueï¿½È‚ï¿½ï¿½xï¿½ï¿½ï¿½mï¿½ÍˆÍ“ï¿½ï¿½Åƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½mï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    ï¿½ï¿½3ï¿½`ï¿½Ô‚ï¿½pï¿½Ó‚ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½*/
 
     private Rigidbody2D rb;
-    private Enemy enemy; //õ“G‚âƒXƒe[ƒ^ƒX‚ğŠÇ—‚·‚éƒXƒNƒŠƒvƒg
+    private Enemy enemy; //ï¿½ï¿½ï¿½Gï¿½ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½ï¿½ï¿½Ç—ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½Nï¿½ï¿½ï¿½vï¿½g
 
     private void Start()
     {
-        // Rigidbody2D ‚Æ Animator ‚Æ ‚ğæ“¾
+        // Rigidbody2D ï¿½ï¿½ Animator ï¿½ï¿½ ï¿½ï¿½ï¿½æ“¾
         rb = GetComponent<Rigidbody2D>();
         enemy = GetComponent<Enemy>();
         if (target && !NewModel)
@@ -33,7 +33,7 @@ public class Spring : MonoBehaviour
         }
     }
 
-    //ƒIƒuƒWƒFƒNƒg‚ÆÚG‚µ‚½Ûtarget‚Ìó‘Ô‚É‚æ‚Á‚Ä‹““®‚ğ•ÏX
+    //ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ÆÚGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½targetï¿½Ìï¿½Ô‚É‚ï¿½ï¿½ï¿½Ä‹ï¿½ï¿½ï¿½ï¿½ï¿½ÏX
     void OnTriggerEnter2D(Collider2D other)
     {
         if (target && !NewModel)
@@ -50,7 +50,7 @@ public class Spring : MonoBehaviour
         }
     }
 
-    //‰E‚Éˆê•û’Ês‚Å“®‚­ê‡
+    //ï¿½Eï¿½Éˆï¿½ï¿½ï¿½Êsï¿½Å“ï¿½ï¿½ï¿½ï¿½ê‡
     private void UnTargetSpring()
     {
         if (JumpCount < MaxJump)
@@ -65,16 +65,16 @@ public class Spring : MonoBehaviour
         }
     }
 
-    //ƒvƒŒƒCƒ„[‚ğ’Ç‚¢‚©‚¯‚éê‡
+    //ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡
     private void TargetSpring()
     {
-        //ƒvƒŒƒCƒ„[‚ªõ“G”ÍˆÍŠO‚Ì‚»‚Ìê‚Å‚Í‚Ë‚é
+        //ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½ÍˆÍŠOï¿½Ìï¿½ï¿½ï¿½ï¿½Ìï¿½Å‚Í‚Ë‚ï¿½
         if (!enemy.IsDetected && enemy.DetectedPlayer == null)
         {
             rb.linearVelocity = new Vector2(0, MiniJumpForce);
             enemy.detectionRadius = 5f;
         }
-        //ƒvƒŒƒCƒ„[‚ªõ“G”ÍˆÍ‚Ì’Ç‚¢‚©‚¯‚é
+        //ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½ÍˆÍ‚Ìï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         else if (enemy.IsDetected && enemy.DetectedPlayer != null)
         {
             enemy.detectionRadius = 15f;
@@ -121,28 +121,33 @@ public class Spring : MonoBehaviour
 
     private void MoveTowardsPlayer(float JumpForce)
     {
-        // ‘Š‘ÎÀ•W¨³‹K‰»
+        // ï¿½ï¿½ï¿½Îï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½ï¿½
         float direction = (enemy.DetectedPlayer.transform.position.x - transform.position.x);
         direction = direction < 0 ? -1 : 1;
 
         rb.linearVelocity = new Vector2(direction * MoveSpeed, JumpForce);
 
-        // ˆÚ“®•ûŒü‚É‰‚¶‚ÄƒXƒvƒ‰ƒCƒg‚ÌŒü‚«‚ğ•Ï‚¦‚é
+        // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É‰ï¿½ï¿½ï¿½ï¿½ÄƒXï¿½vï¿½ï¿½ï¿½Cï¿½gï¿½ÌŒï¿½ï¿½ï¿½ï¿½ï¿½Ï‚ï¿½ï¿½ï¿½
         FlipSprite(rb.linearVelocity.x);
     }
 
     private void FlipSprite(float horizontalVelocity)
     {
-        // ‘¬“x‚ª‰EŒü‚«i0‚æ‚è‘å‚«‚¢j‚È‚çƒXƒvƒ‰ƒCƒg‚Í‚»‚Ì‚Ü‚Ü
+        // ç¾åœ¨ã®ã‚¹ã‚±ãƒ¼ãƒ«ã‚’ä¸€æ—¦å–å¾—ã™ã‚‹
+        Vector3 currentScale = transform.localScale;
+
+        // æ°´å¹³é€Ÿåº¦ãŒ0.01ã‚ˆã‚Šå¤§ãã„å ´åˆï¼ˆå³å‘ãï¼‰
         if (horizontalVelocity > 0.01f)
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            currentScale.x = Mathf.Abs(currentScale.x);
         }
-        // ‘¬“x‚ª¶Œü‚«i0‚æ‚è¬‚³‚¢j‚È‚çƒXƒvƒ‰ƒCƒg‚ğ”½“]‚³‚¹‚é
+        // æ°´å¹³é€Ÿåº¦ãŒ-0.01ã‚ˆã‚Šå°ã•ã„å ´åˆï¼ˆå·¦å‘ãï¼‰
         else if (horizontalVelocity < -0.01f)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            currentScale.x = -Mathf.Abs(currentScale.x);
         }
-        // ‚Ù‚Ú’â~‚µ‚Ä‚¢‚éê‡‚Í‰½‚à‚µ‚È‚¢
+        
+        transform.localScale = currentScale;
+    
     }
 }

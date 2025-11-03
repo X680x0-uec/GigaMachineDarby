@@ -390,9 +390,9 @@ GameObject:
   - component: {fileID: 7302228898283523344}
   - component: {fileID: 6138507201413805993}
   - component: {fileID: 1704507402603831066}
-  - component: {fileID: 9079273960643489990}
   - component: {fileID: 42056177578801049}
-  - component: {fileID: 1959936790414218816}
+  - component: {fileID: 7902160754211473410}
+  - component: {fileID: 5978465535988545369}
   m_Layer: 0
   m_Name: Bomb
   m_TagString: Untagged
@@ -501,7 +501,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -548,27 +548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
---- !u!114 &9079273960643489990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7519404045644821542}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2657f75cb329f14d9aa3e2e31f25e05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRadius: 5
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  maxHP: 100
-  HPbar: {fileID: 311377233727325366}
-  hpBarFill: {fileID: 0}
-  knockbackForce: 5
-  deathDelay: 0.5
+  damageInterval: 1
 --- !u!61 &42056177578801049
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -615,7 +595,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1959936790414218816
+--- !u!114 &7902160754211473410
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -624,7 +604,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 7519404045644821542}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 398253a00e7a2ae4192efe8c46201276, type: 3}
+  m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  maxHP: 100
+  HPbar: {fileID: 311377233727325366}
+  hpBarFill: {fileID: 1800944157224681105}
+  knockbackForce: 5
+  deathDelay: 0.5
+--- !u!114 &5978465535988545369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7519404045644821542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b18e5d0422d77c4d811b706d72c91c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 8

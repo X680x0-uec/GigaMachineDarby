@@ -6,13 +6,13 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 public class Hammer : MonoBehaviour
 {
-    // QÆ‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
+    // ï¿½Qï¿½Æ‚ï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½|ï¿½[ï¿½lï¿½ï¿½ï¿½g
     private Rigidbody2D rb;
-    private Enemy enemy; //õ“G‚âƒXƒe[ƒ^ƒX‚ğŠÇ—‚·‚éƒXƒNƒŠƒvƒg
-    private enemy_contact EnemyContact; //ÚG‚É‚æ‚éƒ_ƒ[ƒW‚Ì”»’è‚Æ’l‚ğŠÇ—‚·‚éƒXƒNƒŠƒvƒg
+    private Enemy enemy; //ï¿½ï¿½ï¿½Gï¿½ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½ï¿½ï¿½Ç—ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½Nï¿½ï¿½ï¿½vï¿½g
+    private enemy_contact EnemyContact; //ï¿½ÚGï¿½É‚ï¿½ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½Ì”ï¿½ï¿½ï¿½Æ’lï¿½ï¿½ï¿½Ç—ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½Nï¿½ï¿½ï¿½vï¿½g
 
 
-    [Header("ƒVƒ‡ƒbƒgİ’è")]
+    [Header("ï¿½Vï¿½ï¿½ï¿½bï¿½gï¿½İ’ï¿½")]
     public GameObject boxPrefab;
     public Transform throwPoint;
     public float throwForce = 10f;
@@ -61,6 +61,10 @@ public class Hammer : MonoBehaviour
     void ChangeDirection()
     {
         float hammer_x = transform.position.x;
+        if (enemy.DetectedPlayer == null)
+        {
+            return;
+        }
         float player_x = enemy.DetectedPlayer.transform.position.x;
         if (hammer_x > player_x)
         {
