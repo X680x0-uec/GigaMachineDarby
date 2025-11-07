@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
+    private bool isSpeedBoosted = false; // スピードアップ中かどうか
+    private float originalMoveSpeed;     // 元のスピードを保存
 
     //[SerializeField] private int jumpCount = 0;
     //[SerializeField] private int maxJumpCount = 2;
@@ -18,7 +20,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isInvincible = false;
     [SerializeField] private float hitIntervalSec = 0.3f;
 
+
     [Header("ショット設定")]
+    [SerializeField] private bool isBlackBoosted = false;
+    private float chargeTimeMultiplier = 1f; // チャージ時間短縮用（1f=通常、0.5fなら半分）
+
     public GameObject canprefab;
     public GameObject boxPrefab;
     public Transform throwPoint;
@@ -41,6 +47,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         UpdateHPBar();
+        originalMoveSpeed = moveSpeed;
     }
 
     /*void OnTriggerEnter2D(Collider2D other)
@@ -80,7 +87,6 @@ public class PlayerController : MonoBehaviour
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-
          if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);// 上に移動
@@ -100,28 +106,51 @@ public class PlayerController : MonoBehaviour
         // ショット（スペースキー）
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            holdTime = Time.time - spacePressTime;
+            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映！
+            if (isBlackBoosted)
+            {
+                // 黒エナドリ中の特別な順番
+                if (holdTime >= 2.6f)
+                {
+                    ThrowBox(false, true, new Vector2(1f, 0.25f)); // 箱
+                }
+                else if (holdTime >= 1.6f)
+                {
+                    // 缶3つ
+                    ThrowBox(true, false, new Vector2(1f, 0.8f));
+                    ThrowBox(true, false, new Vector2(1f, 0.1f));
+                    ThrowBox(true, false, new Vector2(1f, -0.05f));
+                }
+                else
+                {
+                    // 爆発缶1つ
+                    ThrowBox(true, false, new Vector2(1f, 0.25f));
+                }
+            }
 
-            if (holdTime >= 2.6f)
-            {
-                ThrowBox(false, true, new Vector2(1f, 0.25f));
-            }
-            else if (holdTime >= 1.6f)
-            {
-                // 中押し → 缶3つを投げる（上・中・下）
-                ThrowBox(true, false, new Vector2(1f, 0.8f));   // 上方向
-                ThrowBox(true, false, new Vector2(1f, 0.1f));     // 真横
-                ThrowBox(true, false, new Vector2(1f, -0.05f));  // 下方向
-            }
-            else if (holdTime >= 0.6f)
-            {
-                // 少し押し → 缶1つを真横に飛ばす
-                ThrowBox(true, false, new Vector2(1f, 0.25f));
-            }
             else
             {
-                // 短押し → 爆発しない缶を真横に飛ばす
-                ThrowBox(false, false, new Vector2(1f, 0.25f));
+                if (holdTime >= 2.6f)
+                {
+                    ThrowBox(false, true, new Vector2(1f, 0.25f));
+                }
+                else if (holdTime >= 1.6f)
+                {
+                    // 中押し → 缶3つを投げる（上・中・下）
+                    ThrowBox(true, false, new Vector2(1f, 0.8f));   // 上方向
+                    ThrowBox(true, false, new Vector2(1f, 0.1f));     // 真横
+                    ThrowBox(true, false, new Vector2(1f, -0.05f));  // 下方向
+                }
+                else if (holdTime >= 0.6f)
+                {
+                    // 少し押し → 缶1つを真横に飛ばす
+                    ThrowBox(true, false, new Vector2(1f, 0.25f));
+                }
+                else
+                {
+                    // 短押し → 爆発しない缶を真横に飛ばす
+                    ThrowBox(false, false, new Vector2(1f, 0.25f));
+                }
             }
         }
     }
@@ -153,16 +182,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
     public void TakeDamage(int damage, Vector2 hitDirection)
     {
         if (isDead || isInvincible) return;
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHPBar();
-        rb.AddForce(transform.up * 400.0f);
         rb.AddForce(transform.right * -400.0f);
+        Debug.Log("ダメージを受けた");
 
         isInvincible = true;
         StartCoroutine(InvincibleCoroutine());
@@ -172,6 +199,35 @@ public class PlayerController : MonoBehaviour
             Die();
         }
     }
+    
+    public void SpeedBoost(float boostAmount, float duration)
+    {
+        if (!isSpeedBoosted)
+        {
+            StartCoroutine(SpeedBoostCoroutine(boostAmount, duration));
+        }
+    }
+
+    public void Heal(int healAmount)
+    {
+        currentHealth += healAmount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // HPがmaxを超えないように
+        UpdateHPBar(); // HPバーを更新
+        Debug.Log($"回復！ 現在のHP: {currentHealth}");
+    }
+
+    private IEnumerator SpeedBoostCoroutine(float boostAmount, float duration)
+    {
+        isSpeedBoosted = true;
+        moveSpeed *= boostAmount; // スピードを上げる
+        Debug.Log("スピードアップ！");
+
+        yield return new WaitForSeconds(duration); // 指定時間待つ
+
+        moveSpeed = originalMoveSpeed; // 元に戻す
+        isSpeedBoosted = false;
+        Debug.Log("Speed boost ended.");
+    }
 
     IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン (part5で追加)
 
@@ -179,6 +235,28 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(hitIntervalSec); // 指定した秒数待機
         isInvincible = false; // 無敵状態を解除
     }
+
+    public void ActivateBlackBoost(float duration, float chargeMultiplier)
+    {
+        if (!isBlackBoosted)
+        {
+            StartCoroutine(BlackBoostCoroutine(duration, chargeMultiplier));
+        }
+    }
+
+    private IEnumerator BlackBoostCoroutine(float duration, float chargeMultiplier)
+    {
+        isBlackBoosted = true;
+        chargeTimeMultiplier = chargeMultiplier; // チャージ時間を短縮（例: 0.5f）
+        Debug.Log("黒エナドリ効果発動！");
+
+        yield return new WaitForSeconds(duration);
+
+        chargeTimeMultiplier = 1f;
+        isBlackBoosted = false;
+        Debug.Log("黒エナドリ効果終了！");
+    }
+
 
     void Die()
     {
