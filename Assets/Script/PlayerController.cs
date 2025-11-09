@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
-{
+{    
     [Header("移動設定")]
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
@@ -31,16 +31,28 @@ public class PlayerController : MonoBehaviour
     public float throwForce = 10f;
     private float spacePressTime;     // スペースを押し始めた時間
     private float holdTime;
-
+    public AudioClip throwSound; 
+    [SerializeField, Range(0f, 1f)]
+    private float throwSoundVolume = 1f;
 
     [Header("体力設定")]
     public int maxHealth = 100;
     private int currentHealth;
     [SerializeField] private Slider HPbar;
+    public AudioClip damageSound;
+    [SerializeField, Range(0f, 1f)]
+    private float damageSoundVolume = 1f;
+    public AudioClip healSound;
+    [SerializeField, Range(0f, 1f)]
+    private float healSoundVolume = 1f;
+    public AudioClip powerupSound;
+    [SerializeField, Range(0f, 1f)]
+    private float powerupSoundVolume = 1f;
 
     private Rigidbody2D rb;
     private bool isGrounded = false;
     private bool isDead = false;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -48,6 +60,8 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         UpdateHPBar();
         originalMoveSpeed = moveSpeed;
+        audioSource = gameObject.AddComponent<AudioSource>();
+
     }
 
     /*void OnTriggerEnter2D(Collider2D other)
@@ -106,13 +120,13 @@ public class PlayerController : MonoBehaviour
         // ショット（スペースキー）
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映！
+            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映
             if (isBlackBoosted)
             {
-                // 黒エナドリ中の特別な順番
+                // 黒エナドリ中の順番
                 if (holdTime >= 2.6f)
                 {
-                    ThrowBox(false, true, new Vector2(1f, 0.25f)); // 箱
+                    ThrowBox(true, true, new Vector2(1f, 0.25f)); // 箱
                 }
                 else if (holdTime >= 1.6f)
                 {
@@ -132,7 +146,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (holdTime >= 2.6f)
                 {
-                    ThrowBox(false, true, new Vector2(1f, 0.25f));
+                    ThrowBox(true, true, new Vector2(1f, 0.25f));
                 }
                 else if (holdTime >= 1.6f)
                 {
@@ -160,7 +174,8 @@ public class PlayerController : MonoBehaviour
     GameObject prefabToThrow = isBox ? boxPrefab : canprefab;
     if (prefabToThrow == null || throwPoint == null) return;
 
-    GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
+        GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
+        audioSource.PlayOneShot(throwSound, throwSoundVolume);
 
     // 爆発フラグを渡す
     BoxBehavior behavior = obj.GetComponent<BoxBehavior>();
@@ -188,6 +203,7 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHPBar();
+        audioSource.PlayOneShot(damageSound, damageSoundVolume);
         rb.AddForce(transform.right * -400.0f);
         Debug.Log("ダメージを受けた");
 
@@ -213,6 +229,7 @@ public class PlayerController : MonoBehaviour
         currentHealth += healAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // HPがmaxを超えないように
         UpdateHPBar(); // HPバーを更新
+        audioSource.PlayOneShot(healSound, healSoundVolume);
         Debug.Log($"回復！ 現在のHP: {currentHealth}");
     }
 
@@ -226,7 +243,7 @@ public class PlayerController : MonoBehaviour
 
         moveSpeed = originalMoveSpeed; // 元に戻す
         isSpeedBoosted = false;
-        Debug.Log("Speed boost ended.");
+        Debug.Log("元のスピードに戻った");
     }
 
     IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン (part5で追加)
@@ -248,15 +265,14 @@ public class PlayerController : MonoBehaviour
     {
         isBlackBoosted = true;
         chargeTimeMultiplier = chargeMultiplier; // チャージ時間を短縮（例: 0.5f）
-        Debug.Log("黒エナドリ効果発動！");
-
+        Debug.Log("ショット強化！");
+        audioSource.PlayOneShot(powerupSound, powerupSoundVolume);
         yield return new WaitForSeconds(duration);
 
         chargeTimeMultiplier = 1f;
         isBlackBoosted = false;
-        Debug.Log("黒エナドリ効果終了！");
+        Debug.Log("ショット強化終了");
     }
-
 
     void Die()
     {
