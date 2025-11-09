@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,10 +6,10 @@ public class Start_to_tutorial : MonoBehaviour
 {
     [SerializeField] Transform player;
 
-    private float player_x = 0f;
-    private float player_y = 0f;
-    private float door_x = 0f;
-    private float door_y = 0f;
+    [SerializeField] private float player_x = 0f;
+    [SerializeField] private float player_y = 0f;
+    [SerializeField] private float door_x = 0f;
+    [SerializeField] private float door_y = 0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,7 +24,7 @@ public class Start_to_tutorial : MonoBehaviour
         door_x = transform.position.x;
         door_y = transform.position.y;
 
-        if (door_x - player_x < 0.5f)
+        if (Math.Abs(door_x - player_x) < 0.1f && Math.Abs(door_y - player_y) < 3f)
         {
             SceneManager.LoadScene("teki_exp", LoadSceneMode.Single);
         }
