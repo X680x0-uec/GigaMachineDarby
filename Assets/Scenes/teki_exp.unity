@@ -246,7 +246,7 @@ Transform:
   m_GameObject: {fileID: 27971303}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: -0.6, z: 0}
+  m_LocalPosition: {x: 0.01, y: -1.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1489,7 +1489,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 1.3}
   m_SizeDelta: {x: 608, y: 395.66666}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &853294363
@@ -1891,8 +1891,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 1147863210727118903, guid: 3712cb2bd18ebf64292482bfc35df881, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1912,7 +1912,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -20, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1189600255}
@@ -1981,17 +1981,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.03055954, y: -0.022918701}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.1251059, y: 2.287}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.9388809, y: 2.2987413}
   m_EdgeRadius: 0
 --- !u!114 &1040537542
 MonoBehaviour:
@@ -2005,6 +2005,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b251ab6dd2187488fd799117f97550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  standingRightSprite: {fileID: 1147863210727118903, guid: 3712cb2bd18ebf64292482bfc35df881, type: 3}
+  standingLeftSprite: {fileID: -3977661166665981135, guid: f52a0ba1a1b43264aaf02acaaf931d1b, type: 3}
+  runRightSprite: {fileID: -3299827535315736150, guid: 894e6bea9525c7846a08a5cc479baad0, type: 3}
+  runLeftSprite: {fileID: -930752467265444883, guid: b4577d0734f9a9d4e8c32cca73dcfcde, type: 3}
   moveSpeed: 7
   jumpForce: 15
   groundLayer:
