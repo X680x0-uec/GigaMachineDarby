@@ -192,6 +192,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isExplosive: 1
   explosionPrefab: {fileID: 357523224324335560, guid: 5b97b606e110ddc4d9a67c35de22d9e6, type: 3}
+  explosionRadius: 2
+  explosionDamage: 20
+  damageTargetLayer:
+    serializedVersion: 2
+    m_Bits: 0
   explosionSound: {fileID: 8300000, guid: 7fd21d4f57258904592a363ef54b3f76, type: 3}
   explosionSoundVolume: 1
 --- !u!82 &-3590835022882551333
