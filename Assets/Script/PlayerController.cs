@@ -5,6 +5,12 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {    
+    [Header("スプライト設定")]
+    public Sprite standingRightSprite;
+    public Sprite standingLeftSprite; 
+    public Sprite runRightSprite; 
+    public Sprite runLeftSprite; 
+
     [Header("移動設定")]
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
@@ -53,15 +59,19 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded = false;
     private bool isDead = false;
     private AudioSource audioSource;
+    private SpriteRenderer sr;
+    private bool facingRight = true;
+    private float moveInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
         currentHealth = maxHealth;
         UpdateHPBar();
         originalMoveSpeed = moveSpeed;
         audioSource = gameObject.AddComponent<AudioSource>();
-
+        sr.sprite = standingRightSprite; // 初期状態を右向きに
     }
 
     /*void OnTriggerEnter2D(Collider2D other)
@@ -91,11 +101,26 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
         // 向き反転
-        if (moveInput != 0)
+        // 向きの変更
+        if (moveInput > 0)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Sign(moveInput);
-            transform.localScale = scale;
+            facingRight = true;
+        }
+        else if (moveInput < 0)
+        {
+            facingRight = false;
+        }
+
+                // 状態ごとの画像切り替え
+        if (Mathf.Abs(moveInput) > 0.1f)
+        {
+            // 移動中
+            sr.sprite = facingRight ? runRightSprite : runLeftSprite;
+        }
+        else
+        {
+            // 停止中
+            sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
         }
 
         // 地面判定
@@ -186,14 +211,16 @@ public class PlayerController : MonoBehaviour
         Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
         if (objRb != null)
         {
-            float direction = transform.localScale.x >= 0 ? 1f : -1f;
-            if (Mathf.Abs(throwDir.y) > 0.05f)
-            {
-                objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized* throwForce, ForceMode2D.Impulse);
-            }
-            else {
-                objRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
-            }
+            float direction = facingRight ? 1f : -1f;
+
+        if (Mathf.Abs(throwDir.y) > 0.05f)
+        {
+            objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized * throwForce, ForceMode2D.Impulse);
+        }
+        else
+        {
+            objRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
+        }
         }
     }
 
