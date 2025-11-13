@@ -200,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
+  m_ScaleFactor: 2
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
@@ -230,7 +230,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: -10
+  m_SortingOrder: -5
   m_TargetDisplay: 0
 --- !u!224 &59132208
 RectTransform:
@@ -380,7 +380,7 @@ Transform:
   m_GameObject: {fileID: 191914760}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -4, z: 0}
+  m_LocalPosition: {x: 0, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -996,13 +996,13 @@ MonoBehaviour:
   standingLeftSprite: {fileID: -3977661166665981135, guid: f52a0ba1a1b43264aaf02acaaf931d1b, type: 3}
   runRightSprite: {fileID: -3299827535315736150, guid: 894e6bea9525c7846a08a5cc479baad0, type: 3}
   runLeftSprite: {fileID: -930752467265444883, guid: b4577d0734f9a9d4e8c32cca73dcfcde, type: 3}
-  moveSpeed: 7
-  jumpForce: 15
+  moveSpeed: 10
+  jumpForce: 20
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   groundCheck: {fileID: 29411735}
-  groundCheckRadius: 0.1
+  groundCheckRadius: 0.2
   isInvincible: 0
   hitIntervalSec: 0.3
   isBlackBoosted: 0
@@ -1157,8 +1157,8 @@ Transform:
   m_GameObject: {fileID: 877526782}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7, y: -3, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalPosition: {x: -7, y: -2.96, z: 0}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1574879301}
@@ -1294,7 +1294,7 @@ Transform:
   m_GameObject: {fileID: 953874595}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.08, y: 10.12, z: 0}
+  m_LocalPosition: {x: 8, y: 10.12, z: 0}
   m_LocalScale: {x: 0.03344, y: 1.38, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1640,7 +1640,7 @@ Transform:
   m_GameObject: {fileID: 1430899738}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.23, y: 9.81, z: 0}
+  m_LocalPosition: {x: -9.8, y: 9.81, z: 0}
   m_LocalScale: {x: 0.03344, y: 1.38, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1872,7 +1872,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7975609413823864314, guid: 021245dbc0ac05d4696b4fa10937d839, type: 3}
+  m_Sprite: {fileID: 4369572136041557648, guid: 4e9165adbac5f6d4bb9af18b13e7a06a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
