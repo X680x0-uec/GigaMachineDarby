@@ -111,7 +111,7 @@ public class PlayerController : MonoBehaviour
             facingRight = false;
         }
 
-                // 状態ごとの画像切り替え
+        // 状態ごとの画像切り替え
         if (Mathf.Abs(moveInput) > 0.1f)
         {
             // 移動中
@@ -141,10 +141,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             spacePressTime = Time.time;
+            moveSpeed *= 0.5f;
         }
         // ショット（スペースキー）
         if (Input.GetKeyUp(KeyCode.Space))
         {
+            moveSpeed=originalMoveSpeed;
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映
             if (isBlackBoosted)
             {
@@ -194,35 +196,40 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-   void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
-    {
+void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
+{
     GameObject prefabToThrow = isBox ? boxPrefab : canprefab;
     if (prefabToThrow == null || throwPoint == null) return;
 
-        GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
-        audioSource.PlayOneShot(throwSound, throwSoundVolume);
+    GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
+    audioSource.PlayOneShot(throwSound, throwSoundVolume);
 
-    // 爆発フラグを渡す
     BoxBehavior behavior = obj.GetComponent<BoxBehavior>();
     if (behavior != null)
-        {
-            behavior.isExplosive = explosive;
-        }
-        Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
-        if (objRb != null)
-        {
-            float direction = facingRight ? 1f : -1f;
+    {
+        behavior.isExplosive = explosive;
+    }
+
+    Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
+    if (objRb != null)
+    {
+        float direction = facingRight ? 1f : -1f;
+
+        float adjustedThrowForce = throwForce * (moveSpeed / originalMoveSpeed);
 
         if (Mathf.Abs(throwDir.y) > 0.05f)
         {
-            objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized * throwForce, ForceMode2D.Impulse);
+            objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized * adjustedThrowForce, ForceMode2D.Impulse);
         }
         else
         {
-            objRb.AddForce(new Vector2(direction, 0.5f).normalized * throwForce, ForceMode2D.Impulse);
+            objRb.AddForce(new Vector2(direction, 0.5f).normalized * adjustedThrowForce, ForceMode2D.Impulse);
         }
-        }
+
+        objRb.linearVelocity += new Vector2(rb.linearVelocity.x * 0.5f, 0);
     }
+}
+
 
     public void TakeDamage(int damage, Vector2 hitDirection)
     {

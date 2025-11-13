@@ -48,7 +48,7 @@ public class BoxBehavior : MonoBehaviour
                     if (enemy != null)
                     {
                         enemy.TakeDamage(explosionDamage);
-                        Debug.Log($"💥 {enemy.name} に {explosionDamage} ダメージ！");
+                        Debug.Log($"{enemy.name} に {explosionDamage} ダメージ！");
                     }
                 }
                 Destroy(GetComponent<SpriteRenderer>());
