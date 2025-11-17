@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
     public float throwForce = 10f;
     private float spacePressTime;     // スペースを押し始めた時間
     private float holdTime;
+    private bool isCharging = false;
+    private bool isSpeedReduced = false;
     public AudioClip throwSound; 
     [SerializeField, Range(0f, 1f)]
     private float throwSoundVolume = 1f;
@@ -141,13 +143,21 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             spacePressTime = Time.time;
-            moveSpeed *= 0.5f;
+            isCharging = true;
         }
+
         // ショット（スペースキー）
         if (Input.GetKeyUp(KeyCode.Space))
         {
+            if (isSpeedReduced)
+            {
+                moveSpeed = originalMoveSpeed;
+                isSpeedReduced = false;
+            }
+            isCharging = false;
             moveSpeed=originalMoveSpeed;
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映
+
             if (isBlackBoosted)
             {
                 // 黒エナドリ中の順番
@@ -192,6 +202,20 @@ public class PlayerController : MonoBehaviour
                     // 短押し → 爆発しない缶を真横に飛ばす
                     ThrowBox(false, false, new Vector2(1f, 0.25f));
                 }
+            }
+        }
+        if (isCharging)
+        {
+            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+            if (holdTime >= 2.6f && !isSpeedReduced)
+            {
+                moveSpeed = originalMoveSpeed * 0.7f;
+                isSpeedReduced = true;
+            }
+            else if(holdTime >= 1.6f && !isSpeedReduced)
+            {
+                moveSpeed = originalMoveSpeed * 0.5f;
+                isSpeedReduced = true;
             }
         }
     }
