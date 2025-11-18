@@ -9,7 +9,6 @@ public class Enemy : MonoBehaviour
     public float detectionRadius = 30f; // 検知距離
     public LayerMask playerLayer;      // プレイヤー用レイヤー
 
-    public GameObject player;
 
     public bool IsDetected { get; private set; }
     public GameObject DetectedPlayer { get; private set; }
@@ -65,8 +64,9 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void DetectPlayer()
     {
-        DetectedPlayer = player.gameObject;
-        if (Math.Abs(DetectedPlayer.transform.position.x - transform.position.x) < detectionRadius && Math.Abs(DetectedPlayer.transform.position.y - transform.position.y) < detectionRadius)
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius, playerLayer);
+        DetectedPlayer = hitColliders.Length > 0 ? hitColliders[0].gameObject : null;
+        if (DetectedPlayer != null && Math.Abs(DetectedPlayer.transform.position.x - transform.position.x) < detectionRadius && Math.Abs(DetectedPlayer.transform.position.y - transform.position.y) < detectionRadius)
         {
             if (!IsDetected)
                 Debug.Log("プレイヤーを発見！");
