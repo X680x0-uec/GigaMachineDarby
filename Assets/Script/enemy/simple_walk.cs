@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 // Rigidbody2DとEnemyスクリプトが必須であることを示す
 public class Simple_walk : MonoBehaviour
@@ -15,16 +16,20 @@ public class Simple_walk : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         enemy = GetComponent<Enemy>();
     }
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         //Enemyスクリプトがプレイヤーを検知しているか確認
         if (enemy == null)
         {
             return;
         }
-        if (enemy.IsDetected && enemy.DetectedPlayer != null)
+        if (enemy.IsDetected && enemy.DetectedPlayer != null) 
         {
             MoveTowardsPlayer();
+        }
+        else
+        {
+            StopMoving();
         }
     }
 
@@ -42,8 +47,7 @@ public class Simple_walk : MonoBehaviour
 
     private void StopMoving()
     {
-        // 速度を0にして停止させる
-        rb.linearVelocity = Vector2.zero;
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
     private void FlipSprite(float horizontalVelocity)
