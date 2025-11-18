@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Unity.VisualScripting;
 
 public class Enemy : MonoBehaviour
 {
     [Header("感知設定")]
-    public float detectionRadius = 5f; // 検知距離
+    public float detectionRadius = 30f; // 検知距離
     public LayerMask playerLayer;      // プレイヤー用レイヤー
+
+    public GameObject player;
 
     public bool IsDetected { get; private set; }
     public GameObject DetectedPlayer { get; private set; }
@@ -62,21 +65,18 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void DetectPlayer()
     {
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, detectionRadius, playerLayer);
-
-        if (hit != null)
+        DetectedPlayer = player.gameObject;
+        if (Math.Abs(DetectedPlayer.transform.position.x - transform.position.x) < detectionRadius && Math.Abs(DetectedPlayer.transform.position.y - transform.position.y) < detectionRadius)
         {
             if (!IsDetected)
                 Debug.Log("プレイヤーを発見！");
             IsDetected = true;
-            DetectedPlayer = hit.gameObject;
         }
         else
         {
             if (IsDetected)
                 Debug.Log("プレイヤーを見失った...");
             IsDetected = false;
-            DetectedPlayer = null;
         }
     }
 
