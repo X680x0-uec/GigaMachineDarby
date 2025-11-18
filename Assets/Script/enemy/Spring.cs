@@ -53,15 +53,23 @@ public class Spring : MonoBehaviour
     //�E�Ɉ���ʍs�œ����ꍇ
     private void UnTargetSpring()
     {
-        if (JumpCount < MaxJump)
+        if (!enemy.IsDetected && enemy.DetectedPlayer == null)
         {
-            rb.linearVelocity = new Vector2(-MoveSpeed, JumpForce);
-            JumpCount++;
+            rb.linearVelocity = new Vector2(0, MiniJumpForce);
+            enemy.detectionRadius = 5f;
         }
-        else if (JumpCount == MaxJump)
+        else
         {
-            rb.linearVelocity = new Vector2(-MoveSpeed, 2 * JumpForce);
-            JumpCount = 1;
+            if (JumpCount < MaxJump)
+            {
+                rb.linearVelocity = new Vector2(-MoveSpeed, JumpForce);
+                JumpCount++;
+            }
+            else if (JumpCount == MaxJump)
+            {
+                rb.linearVelocity = new Vector2(-MoveSpeed, 2 * JumpForce);
+                JumpCount = 1;
+            }
         }
     }
 
