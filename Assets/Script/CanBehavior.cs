@@ -3,65 +3,73 @@ using System.Collections;
 
 public class CanBehavior : MonoBehaviour
 {
+    public bool explosive = true;  
     public bool isFromEnergyBox = false;
-
     public GameObject explosionPrefab;
     public float explosionRadius = 2.3f;
     public int explosionDamage = 20;
 
     public float autoExplosionTime = 1.5f;
+    public AudioClip explosionSound;
+    [SerializeField, Range(0f, 1f)]
+    private float explosionSoundVolume = 1f;
 
     private bool exploded = false;
-
+    private AudioSource audioSource;
+    
     private void Start()
     {
         Collider2D col = GetComponent<Collider2D>();
-    if (col != null)
-    {
-        col.isTrigger = !isFromEnergyBox; // 箱からの缶はTriggerをOFF
-    }
+        if (col != null)
+        {
+            col.isTrigger = !isFromEnergyBox;   // 箱から出た缶だけ衝突判定ON
+        }
+
         StartCoroutine(AutoExplode());
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
-    
 
     IEnumerator AutoExplode()
     {
         yield return new WaitForSeconds(autoExplosionTime);
 
-        if (!exploded)
+        if (!exploded && explosive)
             Explode();
+        else if (!explosive)
+            Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
-{
-    if (exploded) return;
-
-    Enemy enemy = other.GetComponent<Enemy>();
-    if (enemy != null)
     {
-        Explode();
-        return;
-    }
+        if (exploded) return;
 
-    if (!isFromEnergyBox)
-    {
-        if (other.CompareTag("floor") || other.CompareTag("wall"))
+        if (other.GetComponent<Enemy>() != null)
         {
-            Explode();
+            if (explosive) Explode();
+            else Destroy(gameObject);
+            return;
+        }
+
+        if (!isFromEnergyBox)
+        {
+            if (other.CompareTag("floor") || other.CompareTag("wall"))
+            {
+                if (explosive) Explode();
+                else Destroy(gameObject); 
+            }
         }
     }
-}
-
 
     private void Explode()
     {
         if (exploded) return;
         exploded = true;
-
+    if (explosionSound != null)
+        AudioSource.PlayClipAtPoint(explosionSound, transform.position, explosionSoundVolume);
         if (explosionPrefab != null)
         {
             GameObject exp = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(exp, 1f);
+            Destroy(exp, 3f);
         }
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius);

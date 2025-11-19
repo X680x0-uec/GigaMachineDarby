@@ -231,6 +231,15 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
     GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
     audioSource.PlayOneShot(throwSound, throwSoundVolume);
 
+    if (!isBox)
+    {
+        CanBehavior can = obj.GetComponent<CanBehavior>();
+        if (can != null)
+        {
+            can.explosive = explosive;
+        }
+    }
+
     Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
     if (objRb != null)
     {
@@ -244,7 +253,6 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
         objRb.linearVelocity += new Vector2(rb.linearVelocity.x * 0.5f, 0);
     }
 }
-
 
     public void TakeDamage(int damage, Vector2 hitDirection)
     {
