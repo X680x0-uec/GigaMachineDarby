@@ -104,9 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cadf2fd7589e9f42826986c1665f672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isExplosive: 1
-  explosionPrefab: {fileID: 357523224324335560, guid: 5b97b606e110ddc4d9a67c35de22d9e6, type: 3}
-  explosionSound: {fileID: 8300000, guid: e8a3fc7e5d29a9445b1b7bb457e9784c, type: 3}
+  canPrefab: {fileID: 6558356068717419739, guid: e97440203cf2ca24aad9627b977f54dd, type: 3}
+  minCanCount: 8
+  maxCanCount: 10
+  spawnForce: 7
 --- !u!50 &5438134386219674587
 Rigidbody2D:
   serializedVersion: 5
@@ -164,7 +165,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

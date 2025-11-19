@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour
     public int maxHealth = 100;
     private int currentHealth;
     [SerializeField] private Slider HPbar;
+    [SerializeField] private float damageflashDuration = 0.1f;
+    [SerializeField] private int damageflashCount = 4;
     public AudioClip damageSound;
     [SerializeField, Range(0f, 1f)]
     private float damageSoundVolume = 1f;
@@ -157,6 +159,7 @@ public class PlayerController : MonoBehaviour
             isCharging = false;
             moveSpeed=originalMoveSpeed;
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映
+            
 
             if (isBlackBoosted)
             {
@@ -228,28 +231,16 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
     GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
     audioSource.PlayOneShot(throwSound, throwSoundVolume);
 
-    BoxBehavior behavior = obj.GetComponent<BoxBehavior>();
-    if (behavior != null)
-    {
-        behavior.isExplosive = explosive;
-    }
-
     Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
     if (objRb != null)
     {
         float direction = facingRight ? 1f : -1f;
-
         float adjustedThrowForce = throwForce * (moveSpeed / originalMoveSpeed);
 
-        if (Mathf.Abs(throwDir.y) > 0.05f)
-        {
-            objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized * adjustedThrowForce, ForceMode2D.Impulse);
-        }
-        else
-        {
-            objRb.AddForce(new Vector2(direction, 0.5f).normalized * adjustedThrowForce, ForceMode2D.Impulse);
-        }
+        Vector2 forceDir = new Vector2(direction * throwDir.x, throwDir.y);
+        if (Mathf.Abs(throwDir.y) < 0.05f) forceDir.y = 0.5f;
 
+        objRb.AddForce(forceDir.normalized * adjustedThrowForce, ForceMode2D.Impulse);
         objRb.linearVelocity += new Vector2(rb.linearVelocity.x * 0.5f, 0);
     }
 }
@@ -264,6 +255,7 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
         audioSource.PlayOneShot(damageSound, damageSoundVolume);
         rb.AddForce(transform.right * -400.0f);
         Debug.Log("ダメージを受けた");
+        DamageFlash();
 
         isInvincible = true;
         StartCoroutine(InvincibleCoroutine());
@@ -273,6 +265,22 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
             Die();
         }
     }
+    public void DamageFlash()
+{
+    StartCoroutine(FlashRoutine());
+}
+
+private IEnumerator FlashRoutine()
+{
+    for (int i = 0; i < damageflashCount; i++)
+    {
+        sr.color = Color.red;                 // 赤
+        yield return new WaitForSeconds(damageflashDuration);
+
+        sr.color = Color.white;               // 元に戻す
+        yield return new WaitForSeconds(damageflashDuration);
+    }
+}
     
     public void SpeedBoost(float boostAmount, float duration)
     {
