@@ -22,7 +22,7 @@ public class CanBehavior : MonoBehaviour
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
         {
-            col.isTrigger = !isFromEnergyBox;   // 箱から出た缶だけ衝突判定ON
+            col.isTrigger = !isFromEnergyBox;
         }
 
         StartCoroutine(AutoExplode());
