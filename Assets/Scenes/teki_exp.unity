@@ -2219,6 +2219,30 @@ MonoBehaviour:
   - {fileID: 7115901567306341609, guid: dfd928c7769727a458febffd566404ee, type: 3}
   - {fileID: -3454974839252342203, guid: ab24e6ae5da6fac46b00a8c50662820f, type: 3}
   runAnimSpeed: 0.1
+  throwAnimRightSprites:
+  - {fileID: -5692728440310534110, guid: 80da6a171c970294da80b03010fc5b6a, type: 3}
+  - {fileID: 7356063139947715338, guid: 60526e1d245518544ad70b8f1622b4e3, type: 3}
+  - {fileID: 6969571815991427083, guid: 309259d52bfb2cd4fa41e33a031d73b5, type: 3}
+  throwAnimLeftSprites:
+  - {fileID: 8494043296611438016, guid: 5913594c5518f494a8c946831a113b4e, type: 3}
+  - {fileID: 4396407670571998918, guid: 03c1d9c59c3b40645b6976951df3a5c8, type: 3}
+  - {fileID: 5235162971797767936, guid: 295a7bd8c20a2cb40ad55d038a8bfff9, type: 3}
+  throwAnimSpeed: 0.1
+  chargePoseRightSprite: {fileID: -2046064501324313755, guid: bece7ec2790af854299dc43e8fe73e74, type: 3}
+  chargePoseLeftSprite: {fileID: 6013148560891255169, guid: 7e3044db1899fac49b69d5fda33b2b29, type: 3}
+  chargeAnimRightSprites:
+  - {fileID: -6849638643195799839, guid: 6217945added696458dfbebb9501bfe5, type: 3}
+  - {fileID: -5943106858873926179, guid: 1d6745750e488504fa9daac5195feaca, type: 3}
+  chargeAnimLeftSprites:
+  - {fileID: -2406721431009227668, guid: 32b44c20d3e8cae4bab0f839b2a1e25b, type: 3}
+  - {fileID: 21300000, guid: 936970cd178be784b830f84c84ae38f3, type: 3}
+  chargeAnimRightSprites2:
+  - {fileID: -6098859214004049975, guid: b532b81e43feb0348a72ffa0e2a1e0ba, type: 3}
+  - {fileID: -7154563398508444104, guid: 31e38cf240402e641a712299560f5f4d, type: 3}
+  chargeAnimLeftSprites2:
+  - {fileID: -5446055838482382423, guid: ea539fc14e0d333429fa23f47b76b09d, type: 3}
+  - {fileID: 3282650253456851053, guid: 78085e40f9597934498b5568b6937a8a, type: 3}
+  chargeAnimSpeed: 0.1
   moveSpeed: 14
   jumpForce: 30
   groundLayer:

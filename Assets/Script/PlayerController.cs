@@ -15,6 +15,22 @@ public class PlayerController : MonoBehaviour
     public float runAnimSpeed = 0.1f;
     private int runAnimIndex = 0;
     private float runAnimTimer = 0;
+    public Sprite[] throwAnimRightSprites; // 右向き投げるアニメーション
+    public Sprite[] throwAnimLeftSprites;  // 左向き投げるアニメーション
+    public float throwAnimSpeed = 0.1f;  
+public Sprite chargePoseRightSprite;      // 構え画像（右向き）
+public Sprite chargePoseLeftSprite;       // 構え画像（左向き）
+public Sprite[] chargeAnimRightSprites;   // 2秒以上の交互アニメーション（右向き）
+public Sprite[] chargeAnimLeftSprites;  
+public Sprite[] chargeAnimRightSprites2;  
+
+public Sprite[] chargeAnimLeftSprites2;    // 2秒以上の交互アニメーション（左向き）
+public float chargeAnimSpeed = 0.2f;      // 交互表示の速度
+
+private float chargeAnimTimer = 0;
+private int chargeAnimIndex = 0;
+
+
 
     [Header("移動設定")]
     public float moveSpeed = 5f;
@@ -68,6 +84,9 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer sr;
     private bool facingRight = true;
     private float moveInput;
+    private int throwAnimIndex = 0;         // アニメーションのインデックス
+    private float throwAnimTimer = 0f;      // アニメーションのタイマー
+    private bool isThrowing = false; 
 
     // effect_sound
     // ※ここにチャージ音(0~3)とショット音(4~6)を登録してください
@@ -91,6 +110,36 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (isThrowing)
+        {
+            // 投げアニメーションの更新
+            throwAnimTimer += Time.deltaTime;
+            if (throwAnimTimer >= throwAnimSpeed)
+            {
+                throwAnimTimer = 0;
+                throwAnimIndex++;
+
+                // 右向きの投げアニメーション
+                if (facingRight && throwAnimRightSprites.Length > 0)
+                {
+                    sr.sprite = throwAnimRightSprites[throwAnimIndex % throwAnimRightSprites.Length];
+                }
+                // 左向きの投げアニメーション
+                else if (!facingRight && throwAnimLeftSprites.Length > 0)
+                {
+                    sr.sprite = throwAnimLeftSprites[throwAnimIndex % throwAnimLeftSprites.Length];
+                }
+            }
+
+            // アニメーションが終わったら元の状態に戻る
+            if (throwAnimIndex >= throwAnimRightSprites.Length || throwAnimIndex >= throwAnimLeftSprites.Length)
+            {
+                isThrowing = false;
+                throwAnimIndex = 0;
+                sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;  // 元の立ち状態に戻す
+            }
+        }
+    
         if (isDead) return;
 
         // --- 移動処理 ---
@@ -242,6 +291,107 @@ public class PlayerController : MonoBehaviour
         {
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
             DrinkSoundType targetChargeType;
+
+// --- アニメーション処理 ---
+if (isCharging)
+{
+    // チャージ中のアニメーション
+    holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+
+    if (holdTime >= 2.6f)
+    {
+        // 2.6秒以上 → 新しいアニメーションに切り替え
+        chargeAnimTimer += Time.deltaTime;
+        if (chargeAnimTimer >= chargeAnimSpeed)
+        {
+            chargeAnimTimer = 0;
+            chargeAnimIndex++;
+        }
+
+        // 2.6秒以上で新しいアニメーションに切り替え
+        if (facingRight && chargeAnimRightSprites.Length > 0)
+        {
+            sr.sprite = chargeAnimRightSprites[chargeAnimIndex % chargeAnimRightSprites.Length];
+        }
+        else if (!facingRight && chargeAnimLeftSprites.Length > 0)
+        {
+            sr.sprite = chargeAnimLeftSprites[chargeAnimIndex % chargeAnimLeftSprites.Length];
+        }
+
+        // さらに異なるアニメーションにしたい場合は、別のスプライトセットに変更
+        // 例えば、別の配列（chargeAnimRightSprites2）を追加して切り替える
+        if (holdTime >= 2.6f)
+        {
+            // ここでさらに新しいアニメーションに切り替え（例えば別のスプライト）
+            if (facingRight && chargeAnimRightSprites2.Length > 0)
+            {
+                sr.sprite = chargeAnimRightSprites2[chargeAnimIndex % chargeAnimRightSprites2.Length];
+            }
+            else if (!facingRight && chargeAnimLeftSprites2.Length > 0)
+            {
+                sr.sprite = chargeAnimLeftSprites2[chargeAnimIndex % chargeAnimLeftSprites2.Length];
+            }
+        }
+    }
+    else if (holdTime >= 1.6f)
+    {
+        // 1.6秒以上 → 交互アニメーション
+        chargeAnimTimer += Time.deltaTime;
+        if (chargeAnimTimer >= chargeAnimSpeed)
+        {
+            chargeAnimTimer = 0;
+            chargeAnimIndex++;
+        }
+
+        // 2秒以上でアニメーション
+        if (facingRight && chargeAnimRightSprites.Length > 0)
+        {
+            sr.sprite = chargeAnimRightSprites[chargeAnimIndex % chargeAnimRightSprites.Length];
+        }
+        else if (!facingRight && chargeAnimLeftSprites.Length > 0)
+        {
+            sr.sprite = chargeAnimLeftSprites[chargeAnimIndex % chargeAnimLeftSprites.Length];
+        }
+    }
+    else
+    {
+        // 2秒未満 → 構え画像
+        sr.sprite = facingRight ? chargePoseRightSprite : chargePoseLeftSprite;
+        chargeAnimIndex = 0;  // インデックスリセット
+        chargeAnimTimer = 0;  // タイマーリセット
+    }
+}
+else
+{
+    // チャージしていないときのアニメーション（通常の移動アニメーション）
+    if (Mathf.Abs(moveInput) > 0.1f)
+    {
+        // 走りアニメーション
+        runAnimTimer += Time.deltaTime;
+        if (runAnimTimer >= runAnimSpeed)
+        {
+            runAnimTimer = 0;
+            runAnimIndex++;
+        }
+
+        if (facingRight && runRightSprites.Length > 0)
+            sr.sprite = runRightSprites[runAnimIndex % runRightSprites.Length];
+        else if (!facingRight && runLeftSprites.Length > 0)
+            sr.sprite = runLeftSprites[runAnimIndex % runLeftSprites.Length];
+    }
+    else
+    {
+        // 停止中 → 立ち姿
+        sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
+        runAnimIndex = 0;
+        runAnimTimer = 0;
+    }
+}
+
+
+
+
+
 
             // 時間経過によるランク判定
             if (holdTime >= 2.6f)
