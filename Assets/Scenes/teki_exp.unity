@@ -2204,8 +2204,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standingRightSprite: {fileID: 1147863210727118903, guid: 3712cb2bd18ebf64292482bfc35df881, type: 3}
   standingLeftSprite: {fileID: -3977661166665981135, guid: f52a0ba1a1b43264aaf02acaaf931d1b, type: 3}
-  runRightSprite: {fileID: -3299827535315736150, guid: 894e6bea9525c7846a08a5cc479baad0, type: 3}
-  runLeftSprite: {fileID: -930752467265444883, guid: b4577d0734f9a9d4e8c32cca73dcfcde, type: 3}
+  runRightSprites:
+  - {fileID: -3299827535315736150, guid: 894e6bea9525c7846a08a5cc479baad0, type: 3}
+  - {fileID: 8076286214992970370, guid: 9faf1bc1a84f1424283a30663946f74b, type: 3}
+  - {fileID: -3750035754036575689, guid: 6c41ee1e1563a3443ac650bca290ba20, type: 3}
+  - {fileID: -6668272695628746144, guid: 28afec1e465fb8a4db4bceb8b4e9a365, type: 3}
+  - {fileID: -4895722728658139322, guid: 04e6c8ddecf206347b3354bb5fdba79b, type: 3}
+  - {fileID: -1171761447483694228, guid: 2da5ae401e1d1704c9f4bdb5341f55f8, type: 3}
+  runLeftSprites:
+  - {fileID: -930752467265444883, guid: b4577d0734f9a9d4e8c32cca73dcfcde, type: 3}
+  - {fileID: 6142100000386590001, guid: 1528a37bec3603a47bb7a51fb457fd82, type: 3}
+  - {fileID: -5059930414677147042, guid: 9d4ef97472b78bd4eb6dcd3ba26bdb7a, type: 3}
+  - {fileID: -1892365136047680250, guid: fc664941bd85fca43a2b8b48cadba5f8, type: 3}
+  - {fileID: 7115901567306341609, guid: dfd928c7769727a458febffd566404ee, type: 3}
+  - {fileID: -3454974839252342203, guid: ab24e6ae5da6fac46b00a8c50662820f, type: 3}
+  runAnimSpeed: 0.1
   moveSpeed: 14
   jumpForce: 30
   groundLayer:
@@ -2222,13 +2235,6 @@ MonoBehaviour:
   throwForce: 15
   throwSound: {fileID: 8300000, guid: 55e34a512f17846468fd0605753d3471, type: 3}
   throwSoundVolume: 1
-  chargeLevel0Loop: {fileID: 8300000, guid: cd75df9580345df4897d28d480b06d50, type: 3}
-  chargeLevel1Loop: {fileID: 8300000, guid: 5ba7446e7316fcc42b9144daee4d71d8, type: 3}
-  chargeLevel2Loop: {fileID: 8300000, guid: 68b3d86a45bda16458308a28476e4687, type: 3}
-  chargeLevel3Loop: {fileID: 8300000, guid: 51e1d76682874bd418c617c04732515c, type: 3}
-  chargeLevel1Start: {fileID: 8300000, guid: 0d25ec9e301382241a6115aa901934e4, type: 3}
-  chargeLevel2Start: {fileID: 8300000, guid: b4d88264afe6bd043a1cae45f18f8c50, type: 3}
-  chargeLevel3Start: {fileID: 8300000, guid: 75b53d495a2446b4682d096289f3a3cc, type: 3}
   maxHealth: 100
   HPbar: {fileID: 94725046}
   damageflashDuration: 0.1
@@ -4363,7 +4369,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1632686144
@@ -4849,7 +4855,7 @@ SpriteRenderer:
   m_Size: {x: 50, y: 30.004883}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1862149224
