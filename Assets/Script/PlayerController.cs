@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Unity.Mathematics;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -83,6 +85,12 @@ private AudioSource chargeAudioSource;
     private bool facingRight = true;
     private float moveInput;
 
+    // effect_sound
+    public AudioClip[] enegyDrinkSound;
+    private enum DrinkSoundType { first, second, third, forth, first_shot, second_shot, third_shot }
+    private DrinkSoundType currentChargeType = DrinkSoundType.first; 
+    private bool isSoundPlaying = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -150,7 +158,7 @@ else
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-         if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);// 上に移動
         }
@@ -162,6 +170,26 @@ else
             }
         }
 
+    if (Input.GetKeyDown(KeyCode.Space))
+        {
+            spacePressTime = Time.time;
+            isCharging = true;
+            currentChargeType = DrinkSoundType.first; 
+            isSoundPlaying = false;
+            audioSource.Stop(); 
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (isSpeedReduced)
+            {
+                moveSpeed = originalMoveSpeed;
+                isSpeedReduced = false;
+            }
+
+            isCharging = false;
+            moveSpeed = originalMoveSpeed;
+            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
 if (Input.GetKeyDown(KeyCode.Space))
 {
     spacePressTime = Time.time;
@@ -215,51 +243,106 @@ if (Input.GetKeyUp(KeyCode.Space))
     if (chargeAudioSource.isPlaying)
         chargeAudioSource.Stop();
             
+            audioSource.Stop();
+            audioSource.loop = false;
+            isSoundPlaying = false;
+
+            DrinkSoundType shotSoundToPlay = DrinkSoundType.first_shot;
+            bool shouldPlayShotSound = false;
 
             if (isBlackBoosted)
             {
-                // 黒エナドリ中の順番
-                if (holdTime >= 2.6f)
-                {
-                    ThrowBox(true, true, new Vector2(1f, 0.25f)); // 箱
+                shouldPlayShotSound = true; 
+
+                if (holdTime >= 2.6f) { 
+                    ThrowBox(true, true, new Vector2(1f, 0.25f)); shotSoundToPlay = DrinkSoundType.third_shot; 
                 }
-                else if (holdTime >= 1.6f)
-                {
-                    // 缶3つ
+                else if (holdTime >= 1.6f) { 
+                    ThrowBox(true, false, new Vector2(1f, 0.8f)); ThrowBox(true, false, new Vector2(1f, 0.1f));
+                    ThrowBox(true, false, new Vector2(1f, -0.05f)); shotSoundToPlay = DrinkSoundType.second_shot; 
+                }
+                else {
+                    ThrowBox(true, false, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.first_shot; 
+                }
+            }
+            else
+            {
+                if (holdTime >= 2.6f) { 
+                    ThrowBox(true, true, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.third_shot; 
+                    shouldPlayShotSound = true;
+                }
+                else if (holdTime >= 1.6f) { 
                     ThrowBox(true, false, new Vector2(1f, 0.8f));
                     ThrowBox(true, false, new Vector2(1f, 0.1f));
                     ThrowBox(true, false, new Vector2(1f, -0.05f));
+                    shotSoundToPlay = DrinkSoundType.second_shot;
+                    shouldPlayShotSound = true;
                 }
-                else
-                {
-                    // 爆発缶1つ
+                else if (holdTime >= 0.6f) { 
                     ThrowBox(true, false, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.first_shot; 
+                    shouldPlayShotSound = true;
+                }
+                else { 
+                    ThrowBox(false, false, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.first_shot;
+                    shouldPlayShotSound = false;
                 }
             }
 
+            if (shouldPlayShotSound)
+            {
+                audioSource.PlayOneShot(enegyDrinkSound[(int)shotSoundToPlay]);
+            }
+        }
+
+        if (isCharging)
+        {
+            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+
+            DrinkSoundType targetChargeType;
+
+            if (holdTime >= 2.6f)
+            {
+                targetChargeType = DrinkSoundType.forth;
+                if (!isSpeedReduced) { moveSpeed = originalMoveSpeed * 0.7f; isSpeedReduced = true; }
+            }
+            else if (holdTime >= 1.6f)
+            {
+                targetChargeType = DrinkSoundType.third;
+                if (!isSpeedReduced) { moveSpeed = originalMoveSpeed * 0.5f; isSpeedReduced = true; }
+            }
+            else if (holdTime >= 0.6f)
+            {
+                targetChargeType = DrinkSoundType.second;
+            }
             else
             {
-                if (holdTime >= 2.6f)
+                targetChargeType = DrinkSoundType.first;
+            }
+
+            if (currentChargeType != targetChargeType)
+            {
+                audioSource.Stop();
+                
+                currentChargeType = targetChargeType;
+
+                if (targetChargeType != DrinkSoundType.first)
                 {
-                    ThrowBox(true, true, new Vector2(1f, 0.25f));
+                    audioSource.clip = enegyDrinkSound[(int)targetChargeType];
+                    audioSource.loop = true;
+                    audioSource.Play();
+
+                    int shotIndex = (int)targetChargeType + 3;
+                    if (shotIndex < enegyDrinkSound.Length)
+                    {
+                        audioSource.PlayOneShot(enegyDrinkSound[shotIndex]);
+                    }
                 }
-                else if (holdTime >= 1.6f)
-                {
-                    // 中押し → 缶3つを投げる（上・中・下）
-                    ThrowBox(true, false, new Vector2(1f, 0.8f));   // 上方向
-                    ThrowBox(true, false, new Vector2(1f, 0.1f));     // 真横
-                    ThrowBox(true, false, new Vector2(1f, -0.05f));  // 下方向
-                }
-                else if (holdTime >= 0.6f)
-                {
-                    // 少し押し → 缶1つを真横に飛ばす
-                    ThrowBox(true, false, new Vector2(1f, 0.25f));
-                }
-                else
-                {
-                    // 短押し → 爆発しない缶を真横に飛ばす
-                    ThrowBox(false, false, new Vector2(1f, 0.25f));
-                }
+                
+                isSoundPlaying = true;
             }
         }
 if (isCharging)
