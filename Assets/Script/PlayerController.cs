@@ -104,6 +104,15 @@ private AudioSource chargeAudioSource;
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
+    if (moveInput > 0)
+    {
+        facingRight = true;
+    }
+    else if (moveInput < 0)
+    {
+        facingRight = false;
+    }
+    
 // 状態ごとの画像切り替え
 if (Mathf.Abs(moveInput) > 0.1f)
 {
