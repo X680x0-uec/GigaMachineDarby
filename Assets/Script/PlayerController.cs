@@ -42,6 +42,19 @@ public class PlayerController : MonoBehaviour
     public AudioClip throwSound; 
     [SerializeField, Range(0f, 1f)]
     private float throwSoundVolume = 1f;
+[Header("チャージ音（ループ）")]
+public AudioClip chargeLevel0Loop;
+public AudioClip chargeLevel1Loop;
+public AudioClip chargeLevel2Loop;
+public AudioClip chargeLevel3Loop;
+
+[Header("チャージ音（切り替え時）")]
+public AudioClip chargeLevel1Start;
+public AudioClip chargeLevel2Start;
+public AudioClip chargeLevel3Start;
+private int currentChargeLevel = 0;
+private AudioSource chargeAudioSource;
+
 
     [Header("体力設定")]
     public int maxHealth = 100;
@@ -76,25 +89,9 @@ public class PlayerController : MonoBehaviour
         originalMoveSpeed = moveSpeed;
         audioSource = gameObject.AddComponent<AudioSource>();
         sr.sprite = standingRightSprite; // 初期状態を右向きに
+    chargeAudioSource = gameObject.AddComponent<AudioSource>();
+    chargeAudioSource.loop = true;
     }
-
-    /*void OnTriggerEnter2D(Collider2D other)
-    {
-        //リセット
-        if (other.gameObject.CompareTag("floor"))
-        {
-            jumpCount = 0;
-        }
-    }
-
-    // ジャンプせず離れたときの空中2回ジャンプを防ぐ
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("floor"))
-        {
-            jumpCount = 1;
-        }
-    }*/
 
     void Update()//アップデート
     {
@@ -142,23 +139,58 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            spacePressTime = Time.time;
-            isCharging = true;
-        }
+if (Input.GetKeyDown(KeyCode.Space))
+{
+    spacePressTime = Time.time;
+    isCharging = true;
+    currentChargeLevel = 0;
 
-        // ショット（スペースキー）
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            if (isSpeedReduced)
-            {
-                moveSpeed = originalMoveSpeed;
-                isSpeedReduced = false;
-            }
-            isCharging = false;
-            moveSpeed=originalMoveSpeed;
-            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映
+    // 0段階ループ音開始
+    chargeAudioSource.clip = chargeLevel0Loop;
+    chargeAudioSource.Play();
+}
+
+void ChangeChargeSound(int level)
+{
+    switch (level)
+    {
+        case 0:
+            chargeAudioSource.clip = chargeLevel0Loop;
+            chargeAudioSource.Play();
+            break;
+
+        case 1:
+            chargeAudioSource.clip = chargeLevel1Loop;
+            chargeAudioSource.Play();
+            audioSource.PlayOneShot(chargeLevel1Start);
+            break;
+
+        case 2:
+            chargeAudioSource.clip = chargeLevel2Loop;
+            chargeAudioSource.Play();
+            audioSource.PlayOneShot(chargeLevel2Start);
+            break;
+
+        case 3:
+            chargeAudioSource.clip = chargeLevel3Loop;
+            chargeAudioSource.Play();
+            audioSource.PlayOneShot(chargeLevel3Start);
+            break;
+    }
+}
+
+
+if (Input.GetKeyUp(KeyCode.Space))
+{
+    isCharging = false;
+
+    if (chargeAudioSource.isPlaying)
+        chargeAudioSource.Stop();
+
+    // ここから投げる処理
+    holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+    if (chargeAudioSource.isPlaying)
+        chargeAudioSource.Stop();
             
 
             if (isBlackBoosted)
@@ -207,20 +239,23 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        if (isCharging)
-        {
-            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
-            if (holdTime >= 2.6f && !isSpeedReduced)
-            {
-                moveSpeed = originalMoveSpeed * 0.7f;
-                isSpeedReduced = true;
-            }
-            else if(holdTime >= 1.6f && !isSpeedReduced)
-            {
-                moveSpeed = originalMoveSpeed * 0.5f;
-                isSpeedReduced = true;
-            }
-        }
+if (isCharging)
+{
+    holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+
+    int newLevel = 0;
+    if (holdTime >= 2.6f) newLevel = 3;
+    else if (holdTime >= 1.6f) newLevel = 2;
+    else if (holdTime >= 0.6f) newLevel = 1;
+
+    // レベルが変わった時だけ音を切り替える
+    if (newLevel != currentChargeLevel)
+    {
+        currentChargeLevel = newLevel;
+        ChangeChargeSound(newLevel);
+    }
+}
+
     }
 
 void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
