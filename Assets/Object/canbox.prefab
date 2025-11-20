@@ -107,7 +107,7 @@ MonoBehaviour:
   canPrefab: {fileID: 6558356068717419739, guid: e97440203cf2ca24aad9627b977f54dd, type: 3}
   minCanCount: 8
   maxCanCount: 10
-  spawnForce: 7
+  spawnForce: 15
 --- !u!50 &5438134386219674587
 Rigidbody2D:
   serializedVersion: 5

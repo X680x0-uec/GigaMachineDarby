@@ -10,8 +10,11 @@ public class PlayerController : MonoBehaviour
     [Header("スプライト設定")]
     public Sprite standingRightSprite;
     public Sprite standingLeftSprite; 
-    public Sprite runRightSprite; 
-    public Sprite runLeftSprite; 
+public Sprite[] runRightSprites;
+public Sprite[] runLeftSprites; 
+public float runAnimSpeed = 0.1f;
+private int runAnimIndex = 0; 
+private float runAnimTimer = 0;
 
     [Header("移動設定")]
     public float moveSpeed = 5f;
@@ -44,6 +47,19 @@ public class PlayerController : MonoBehaviour
     public AudioClip throwSound; 
     [SerializeField, Range(0f, 1f)]
     private float throwSoundVolume = 1f;
+[Header("チャージ音（ループ）")]
+public AudioClip chargeLevel0Loop;
+public AudioClip chargeLevel1Loop;
+public AudioClip chargeLevel2Loop;
+public AudioClip chargeLevel3Loop;
+
+[Header("チャージ音（切り替え時）")]
+public AudioClip chargeLevel1Start;
+public AudioClip chargeLevel2Start;
+public AudioClip chargeLevel3Start;
+private int currentChargeLevel = 0;
+private AudioSource chargeAudioSource;
+
 
     [Header("体力設定")]
     public int maxHealth = 100;
@@ -84,7 +100,10 @@ public class PlayerController : MonoBehaviour
         originalMoveSpeed = moveSpeed;
         audioSource = gameObject.AddComponent<AudioSource>();
         sr.sprite = standingRightSprite; // 初期状態を右向きに
+    chargeAudioSource = gameObject.AddComponent<AudioSource>();
+    chargeAudioSource.loop = true;
     }
+
     void Update()//アップデート
     {
         if (isDead) return;
@@ -93,28 +112,48 @@ public class PlayerController : MonoBehaviour
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-        // 向き反転
-        // 向きの変更
-        if (moveInput > 0)
+    if (moveInput > 0)
+    {
+        facingRight = true;
+    }
+    else if (moveInput < 0)
+    {
+        facingRight = false;
+    }
+    
+// 状態ごとの画像切り替え
+if (Mathf.Abs(moveInput) > 0.1f)
+{
+    // 移動中 → 走りアニメーション
+    runAnimTimer += Time.deltaTime;
+    if (runAnimTimer >= runAnimSpeed)
+    {
+        runAnimTimer = 0;
+        runAnimIndex++;
+        if (facingRight)
         {
-            facingRight = true;
-        }
-        else if (moveInput < 0)
-        {
-            facingRight = false;
-        }
-
-        // 状態ごとの画像切り替え
-        if (Mathf.Abs(moveInput) > 0.1f)
-        {
-            // 移動中
-            sr.sprite = facingRight ? runRightSprite : runLeftSprite;
+            if (runRightSprites.Length > 0)
+                runAnimIndex %= runRightSprites.Length;
+            sr.sprite = runRightSprites[runAnimIndex];
         }
         else
         {
-            // 停止中
-            sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
+            if (runLeftSprites.Length > 0)
+                runAnimIndex %= runLeftSprites.Length;
+            sr.sprite = runLeftSprites[runAnimIndex];
         }
+    }
+}
+else
+{
+    // 停止中
+    sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
+
+    // アニメーションリセット
+    runAnimIndex = 0;
+    runAnimTimer = 0;
+}
+
 
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
@@ -151,6 +190,58 @@ public class PlayerController : MonoBehaviour
             isCharging = false;
             moveSpeed = originalMoveSpeed;
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+if (Input.GetKeyDown(KeyCode.Space))
+{
+    spacePressTime = Time.time;
+    isCharging = true;
+    currentChargeLevel = 0;
+
+    // 0段階ループ音開始
+    chargeAudioSource.clip = chargeLevel0Loop;
+    chargeAudioSource.Play();
+}
+
+void ChangeChargeSound(int level)
+{
+    switch (level)
+    {
+        case 0:
+            chargeAudioSource.clip = chargeLevel0Loop;
+            chargeAudioSource.Play();
+            break;
+
+        case 1:
+            chargeAudioSource.clip = chargeLevel1Loop;
+            chargeAudioSource.Play();
+            audioSource.PlayOneShot(chargeLevel1Start);
+            break;
+
+        case 2:
+            chargeAudioSource.clip = chargeLevel2Loop;
+            chargeAudioSource.Play();
+            audioSource.PlayOneShot(chargeLevel2Start);
+            break;
+
+        case 3:
+            chargeAudioSource.clip = chargeLevel3Loop;
+            chargeAudioSource.Play();
+            audioSource.PlayOneShot(chargeLevel3Start);
+            break;
+    }
+}
+
+
+if (Input.GetKeyUp(KeyCode.Space))
+{
+    isCharging = false;
+
+    if (chargeAudioSource.isPlaying)
+        chargeAudioSource.Stop();
+
+    // ここから投げる処理
+    holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+    if (chargeAudioSource.isPlaying)
+        chargeAudioSource.Stop();
             
             audioSource.Stop();
             audioSource.loop = false;
@@ -254,6 +345,23 @@ public class PlayerController : MonoBehaviour
                 isSoundPlaying = true;
             }
         }
+if (isCharging)
+{
+    holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+
+    int newLevel = 0;
+    if (holdTime >= 2.6f) newLevel = 3;
+    else if (holdTime >= 1.6f) newLevel = 2;
+    else if (holdTime >= 0.6f) newLevel = 1;
+
+    // レベルが変わった時だけ音を切り替える
+    if (newLevel != currentChargeLevel)
+    {
+        currentChargeLevel = newLevel;
+        ChangeChargeSound(newLevel);
+    }
+}
+
     }
 
 void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
@@ -263,6 +371,15 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
 
     GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
     audioSource.PlayOneShot(throwSound, throwSoundVolume);
+
+    if (!isBox)
+    {
+        CanBehavior can = obj.GetComponent<CanBehavior>();
+        if (can != null)
+        {
+            can.explosive = explosive;
+        }
+    }
 
     Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
     if (objRb != null)
@@ -277,7 +394,6 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
         objRb.linearVelocity += new Vector2(rb.linearVelocity.x * 0.5f, 0);
     }
 }
-
 
     public void TakeDamage(int damage, Vector2 hitDirection)
     {
