@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class new_following_camera : MonoBehaviour
@@ -9,13 +10,14 @@ public class new_following_camera : MonoBehaviour
     public float leftLimit = -10f;      // カメラが行ける左端の座標
     public float rightLimit = 10f;      // カメラが行ける右端の座標
     public float smoothSpeed = 5f;      // LateUpdateでの追従スピード (未使用だが互換性のため残す)
-
+    public float first_leftlimit = 0f;
+    public float first_rightlimit = 0f;
     [Header("境界と制限")]
     [SerializeField] private float limit = 10f; // horizontal状態での境界内での追従制限値
 
     // --- Private/State Fields ---
     private Coroutine currentCoroutine; // コルーチンの制御用
-    private axis nowstate;             // 現在のカメラの追従状態
+    [SerializeField] private axis nowstate;             // 現在のカメラの追従状態
 
     // 初期設定値
     [HideInInspector] public float first_position_y;
@@ -35,6 +37,9 @@ public class new_following_camera : MonoBehaviour
 
     private void Start()
     {
+        first_leftLimit = leftLimit;
+        first_rightLimit = rightLimit;
+
         if (target == null)
         {
             Debug.LogError("追従ターゲットが設定されていません。", this);
@@ -69,101 +74,108 @@ public class new_following_camera : MonoBehaviour
         }
     }
 
-    // --- Private Follow Logic (修正部分) ---
+    // --- Private Follow Logic (即時追従) ---
 
     private void HandleVerticalFollow()
     {
-        // ★ 修正: 即時追従ロジックに置き換え
         transform.position = new Vector3(target.transform.position.x - offset.x, first_position_y, transform.position.z);
 
-        if (transform.position.x >= rightLimit)
+        if (transform.position.x >= first_rightLimit)
         {
-            transform.position = new Vector3(rightLimit, transform.position.y, transform.position.z);
+            transform.position = new Vector3(first_rightLimit, first_position_y, transform.position.z);
         }
-        // ★ else if ではなく、ご要望通り if のままにする
-        if (transform.position.x <= leftLimit)
+        if (transform.position.x <= first_leftLimit)
         {
-            transform.position = new Vector3(leftLimit, transform.position.y, transform.position.z);
+            transform.position = new Vector3(first_leftLimit, first_position_y, transform.position.z);
         }
     }
 
     private void HandleHorizontalFollow()
     {
-        // ★ 修正: 即時追従ロジックに置き換え
         transform.position = new Vector3(target.transform.position.x - offset.x, target.transform.position.y - offset.y, transform.position.z);
 
         if (rightLimit - transform.position.x <= limit)
         {
             transform.position = new Vector3(rightLimit - limit, target.transform.position.y - offset.y, transform.position.z);
         }
-        // ★ else if ではなく、ご要望通り if のままにする
         if (transform.position.x - leftLimit <= limit)
         {
             transform.position = new Vector3(leftLimit + limit, target.transform.position.y - offset.y, transform.position.z);
         }
     }
 
-    // --- Public Transition Methods ---
+    // --- Public Transition Methods (外部から呼び出されることを前提) ---
 
-    // 縦追従へ遷移 (横→縦)
+    // 縦追従へ遷移 (横→縦, Yを固定値へ)
+    // 外部スクリプトから呼び出されることを想定し、 public を維持
     public void vertical_axis()
     {
-        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+        if (nowstate == axis.horizontal)
+        {
+            if (currentCoroutine != null) StopCoroutine(currentCoroutine);
 
-        Vector3 finalTargetPosition = new Vector3(
-            target.position.x - offset.x,
-            first_position_y,
-            transform.position.z
-        );
+            // 目標X座標はプレイヤーのX座標を使用
+            Vector3 finalTargetPosition = new Vector3(
+                target.position.x - offset.x, // プレイヤー追従位置
+                first_position_y,             // Yは固定値
+                transform.position.z
+            );
 
-        nowstate = axis.horizontal_to_vertical_transition;
+            nowstate = axis.horizontal_to_vertical_transition;
 
-        currentCoroutine = StartCoroutine(MoveToPositionOverTime(finalTargetPosition, 0.2f, axis.vertical));
+            // 遷移時間 0.1秒
+            currentCoroutine = StartCoroutine(MoveToPositionOverTime(finalTargetPosition, 0.2f, axis.vertical));
 
-        leftLimit = first_leftLimit;
-        rightLimit = first_rightLimit;
+            leftLimit = first_leftLimit;
+            rightLimit = first_rightLimit;
+        }
     }
 
-    // 横追従へ遷移 (縦→横)
+    // 横追従へ遷移 (縦→横, Yを追従位置へ)
+    // 外部スクリプトから呼び出されることを想定し、 public を維持
     public void horizontal_axis(float newLeftLimit, float newRightLimit)
     {
-        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
-
-        leftLimit = newLeftLimit;
-        rightLimit = newRightLimit;
-
-        // --- ★ 遷移目標X座標の計算 ★ ---
-        float currentX = transform.position.x;
-        float targetRightX = rightLimit - limit;
-        float targetLeftX = leftLimit + limit;
-
-        float targetX;
-
-        // 現在のX座標がどちらの目標X座標に近いかを判定
-        if (Mathf.Abs(currentX - targetRightX) < Mathf.Abs(currentX - targetLeftX))
+        if (nowstate == axis.vertical)
         {
-            targetX = targetRightX;
+            if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+
+            leftLimit = newLeftLimit;
+            rightLimit = newRightLimit;
+
+            // --- 目標X座標の計算 (境界線に近い方に移動) ---
+            float currentX = transform.position.x;
+            float targetRightX = rightLimit - limit;
+            float targetLeftX = leftLimit + limit;
+
+            float targetX;
+
+            // 現在のX座標がどちらの目標X座標に近いかを判定
+            if (Mathf.Abs(currentX - targetRightX) < Mathf.Abs(currentX - targetLeftX))
+            {
+                targetX = targetRightX;
+            }
+            else
+            {
+                targetX = targetLeftX;
+            }
+
+            // 目標位置: 計算されたX (境界目標), プレイヤーY, Z維持
+            Vector3 finalTargetPosition = new Vector3(
+                targetX,
+                target.position.y - offset.y,
+                transform.position.z
+            );
+
+            nowstate = axis.vertical_to_horizontal_transition;
+
+            // 遷移時間 0.1秒
+            currentCoroutine = StartCoroutine(MoveToPositionOverTime(finalTargetPosition, 0.2f, axis.horizontal));
         }
-        else
-        {
-            targetX = targetLeftX;
-        }
-
-        // 目標位置: 計算されたX, プレイヤーY, Z維持
-        Vector3 finalTargetPosition = new Vector3(
-            targetX,
-            target.position.y - offset.y,
-            transform.position.z
-        );
-
-        nowstate = axis.vertical_to_horizontal_transition;
-
-        currentCoroutine = StartCoroutine(MoveToPositionOverTime(finalTargetPosition, 0.2f, axis.horizontal));
     }
 
     // --- Coroutine ---
 
-    //スムーズに目標位置へ移動させる汎用コルーチン
+    // 0.1秒かけてスムーズに目標位置へ移動させる汎用コルーチン
     private IEnumerator MoveToPositionOverTime(Vector3 finalTargetPosition, float duration, axis nextState)
     {
         float timeElapsed = 0f;
@@ -181,6 +193,7 @@ public class new_following_camera : MonoBehaviour
 
         transform.position = finalTargetPosition;
 
+        // コルーチン完了後、次の状態へ移行し、参照をクリア
         nowstate = nextState;
         currentCoroutine = null;
     }
