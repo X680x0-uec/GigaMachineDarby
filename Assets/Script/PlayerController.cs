@@ -363,7 +363,7 @@ if (isCharging)
 }
 
     }
-
+}
 void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
 {
     GameObject prefabToThrow = isBox ? boxPrefab : canprefab;
