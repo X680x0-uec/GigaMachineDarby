@@ -380,11 +380,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0ec780a8b72a3439f2f8ea33fefe73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRadius: 30
+  detectionRadius: 5
   playerLayer:
     serializedVersion: 2
     m_Bits: 8
-  player: {fileID: 0}
   maxHP: 100
   HPbar: {fileID: 955204592587515136}
   hpBarFill: {fileID: 7025223632676026776}

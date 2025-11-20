@@ -54,6 +54,7 @@ public class Spring : MonoBehaviour
     private void UnTargetSpring()
     {
         if (enemy.IsDetected && enemy.DetectedPlayer != null){return;}
+
         if (JumpCount < MaxJump)
         {
             rb.linearVelocity = new Vector2(-MoveSpeed, JumpForce);

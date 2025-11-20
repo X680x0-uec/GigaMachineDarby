@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Unity.Mathematics;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -47,6 +49,8 @@ public class PlayerController : MonoBehaviour
     public int maxHealth = 100;
     private int currentHealth;
     [SerializeField] private Slider HPbar;
+    [SerializeField] private float damageflashDuration = 0.1f;
+    [SerializeField] private int damageflashCount = 4;
     public AudioClip damageSound;
     [SerializeField, Range(0f, 1f)]
     private float damageSoundVolume = 1f;
@@ -65,6 +69,12 @@ public class PlayerController : MonoBehaviour
     private bool facingRight = true;
     private float moveInput;
 
+    // effect_sound
+    public AudioClip[] enegyDrinkSound;
+    private enum DrinkSoundType { first, second, third, forth, first_shot, second_shot, third_shot }
+    private DrinkSoundType currentChargeType = DrinkSoundType.first; 
+    private bool isSoundPlaying = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -75,25 +85,6 @@ public class PlayerController : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         sr.sprite = standingRightSprite; // 初期状態を右向きに
     }
-
-    /*void OnTriggerEnter2D(Collider2D other)
-    {
-        //リセット
-        if (other.gameObject.CompareTag("floor"))
-        {
-            jumpCount = 0;
-        }
-    }
-
-    // ジャンプせず離れたときの空中2回ジャンプを防ぐ
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("floor"))
-        {
-            jumpCount = 1;
-        }
-    }*/
-
     void Update()//アップデート
     {
         if (isDead) return;
@@ -128,7 +119,7 @@ public class PlayerController : MonoBehaviour
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-         if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)// 上矢印キーが押されたとき
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);// 上に移動
         }
@@ -140,13 +131,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+    if (Input.GetKeyDown(KeyCode.Space))
         {
             spacePressTime = Time.time;
             isCharging = true;
+            currentChargeType = DrinkSoundType.first; 
+            isSoundPlaying = false;
+            audioSource.Stop(); 
         }
 
-        // ショット（スペースキー）
         if (Input.GetKeyUp(KeyCode.Space))
         {
             if (isSpeedReduced)
@@ -154,68 +147,111 @@ public class PlayerController : MonoBehaviour
                 moveSpeed = originalMoveSpeed;
                 isSpeedReduced = false;
             }
+
             isCharging = false;
-            moveSpeed=originalMoveSpeed;
-            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier; // ← 短縮効果を反映
+            moveSpeed = originalMoveSpeed;
+            holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
+            
+            audioSource.Stop();
+            audioSource.loop = false;
+            isSoundPlaying = false;
+
+            DrinkSoundType shotSoundToPlay = DrinkSoundType.first_shot;
+            bool shouldPlayShotSound = false;
 
             if (isBlackBoosted)
             {
-                // 黒エナドリ中の順番
-                if (holdTime >= 2.6f)
-                {
-                    ThrowBox(true, true, new Vector2(1f, 0.25f)); // 箱
+                shouldPlayShotSound = true; 
+
+                if (holdTime >= 2.6f) { 
+                    ThrowBox(true, true, new Vector2(1f, 0.25f)); shotSoundToPlay = DrinkSoundType.third_shot; 
                 }
-                else if (holdTime >= 1.6f)
-                {
-                    // 缶3つ
+                else if (holdTime >= 1.6f) { 
+                    ThrowBox(true, false, new Vector2(1f, 0.8f)); ThrowBox(true, false, new Vector2(1f, 0.1f));
+                    ThrowBox(true, false, new Vector2(1f, -0.05f)); shotSoundToPlay = DrinkSoundType.second_shot; 
+                }
+                else {
+                    ThrowBox(true, false, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.first_shot; 
+                }
+            }
+            else
+            {
+                if (holdTime >= 2.6f) { 
+                    ThrowBox(true, true, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.third_shot; 
+                    shouldPlayShotSound = true;
+                }
+                else if (holdTime >= 1.6f) { 
                     ThrowBox(true, false, new Vector2(1f, 0.8f));
                     ThrowBox(true, false, new Vector2(1f, 0.1f));
                     ThrowBox(true, false, new Vector2(1f, -0.05f));
+                    shotSoundToPlay = DrinkSoundType.second_shot;
+                    shouldPlayShotSound = true;
                 }
-                else
-                {
-                    // 爆発缶1つ
+                else if (holdTime >= 0.6f) { 
                     ThrowBox(true, false, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.first_shot; 
+                    shouldPlayShotSound = true;
+                }
+                else { 
+                    ThrowBox(false, false, new Vector2(1f, 0.25f));
+                    shotSoundToPlay = DrinkSoundType.first_shot;
+                    shouldPlayShotSound = false;
                 }
             }
 
-            else
+            if (shouldPlayShotSound)
             {
-                if (holdTime >= 2.6f)
-                {
-                    ThrowBox(true, true, new Vector2(1f, 0.25f));
-                }
-                else if (holdTime >= 1.6f)
-                {
-                    // 中押し → 缶3つを投げる（上・中・下）
-                    ThrowBox(true, false, new Vector2(1f, 0.8f));   // 上方向
-                    ThrowBox(true, false, new Vector2(1f, 0.1f));     // 真横
-                    ThrowBox(true, false, new Vector2(1f, -0.05f));  // 下方向
-                }
-                else if (holdTime >= 0.6f)
-                {
-                    // 少し押し → 缶1つを真横に飛ばす
-                    ThrowBox(true, false, new Vector2(1f, 0.25f));
-                }
-                else
-                {
-                    // 短押し → 爆発しない缶を真横に飛ばす
-                    ThrowBox(false, false, new Vector2(1f, 0.25f));
-                }
+                audioSource.PlayOneShot(enegyDrinkSound[(int)shotSoundToPlay]);
             }
         }
+
         if (isCharging)
         {
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
-            if (holdTime >= 2.6f && !isSpeedReduced)
+
+            DrinkSoundType targetChargeType;
+
+            if (holdTime >= 2.6f)
             {
-                moveSpeed = originalMoveSpeed * 0.7f;
-                isSpeedReduced = true;
+                targetChargeType = DrinkSoundType.forth;
+                if (!isSpeedReduced) { moveSpeed = originalMoveSpeed * 0.7f; isSpeedReduced = true; }
             }
-            else if(holdTime >= 1.6f && !isSpeedReduced)
+            else if (holdTime >= 1.6f)
             {
-                moveSpeed = originalMoveSpeed * 0.5f;
-                isSpeedReduced = true;
+                targetChargeType = DrinkSoundType.third;
+                if (!isSpeedReduced) { moveSpeed = originalMoveSpeed * 0.5f; isSpeedReduced = true; }
+            }
+            else if (holdTime >= 0.6f)
+            {
+                targetChargeType = DrinkSoundType.second;
+            }
+            else
+            {
+                targetChargeType = DrinkSoundType.first;
+            }
+
+            if (currentChargeType != targetChargeType)
+            {
+                audioSource.Stop();
+                
+                currentChargeType = targetChargeType;
+
+                if (targetChargeType != DrinkSoundType.first)
+                {
+                    audioSource.clip = enegyDrinkSound[(int)targetChargeType];
+                    audioSource.loop = true;
+                    audioSource.Play();
+
+                    int shotIndex = (int)targetChargeType + 3;
+                    if (shotIndex < enegyDrinkSound.Length)
+                    {
+                        audioSource.PlayOneShot(enegyDrinkSound[shotIndex]);
+                    }
+                }
+                
+                isSoundPlaying = true;
             }
         }
     }
@@ -228,28 +264,16 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
     GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
     audioSource.PlayOneShot(throwSound, throwSoundVolume);
 
-    BoxBehavior behavior = obj.GetComponent<BoxBehavior>();
-    if (behavior != null)
-    {
-        behavior.isExplosive = explosive;
-    }
-
     Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
     if (objRb != null)
     {
         float direction = facingRight ? 1f : -1f;
-
         float adjustedThrowForce = throwForce * (moveSpeed / originalMoveSpeed);
 
-        if (Mathf.Abs(throwDir.y) > 0.05f)
-        {
-            objRb.AddForce(new Vector2(direction * throwDir.x, throwDir.y).normalized * adjustedThrowForce, ForceMode2D.Impulse);
-        }
-        else
-        {
-            objRb.AddForce(new Vector2(direction, 0.5f).normalized * adjustedThrowForce, ForceMode2D.Impulse);
-        }
+        Vector2 forceDir = new Vector2(direction * throwDir.x, throwDir.y);
+        if (Mathf.Abs(throwDir.y) < 0.05f) forceDir.y = 0.5f;
 
+        objRb.AddForce(forceDir.normalized * adjustedThrowForce, ForceMode2D.Impulse);
         objRb.linearVelocity += new Vector2(rb.linearVelocity.x * 0.5f, 0);
     }
 }
@@ -264,6 +288,7 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
         audioSource.PlayOneShot(damageSound, damageSoundVolume);
         rb.AddForce(transform.right * -400.0f);
         Debug.Log("ダメージを受けた");
+        DamageFlash();
 
         isInvincible = true;
         StartCoroutine(InvincibleCoroutine());
@@ -273,6 +298,22 @@ void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
             Die();
         }
     }
+    public void DamageFlash()
+{
+    StartCoroutine(FlashRoutine());
+}
+
+private IEnumerator FlashRoutine()
+{
+    for (int i = 0; i < damageflashCount; i++)
+    {
+        sr.color = Color.red;                 // 赤
+        yield return new WaitForSeconds(damageflashDuration);
+
+        sr.color = Color.white;               // 元に戻す
+        yield return new WaitForSeconds(damageflashDuration);
+    }
+}
     
     public void SpeedBoost(float boostAmount, float duration)
     {
