@@ -15,22 +15,23 @@ public class PlayerController : MonoBehaviour
     public float runAnimSpeed = 0.1f;
     private int runAnimIndex = 0;
     private float runAnimTimer = 0;
+    
+    [Header("投げアニメーション")]
     public Sprite[] throwAnimRightSprites; // 右向き投げるアニメーション
     public Sprite[] throwAnimLeftSprites;  // 左向き投げるアニメーション
-    public float throwAnimSpeed = 0.1f;  
-public Sprite chargePoseRightSprite;      // 構え画像（右向き）
-public Sprite chargePoseLeftSprite;       // 構え画像（左向き）
-public Sprite[] chargeAnimRightSprites;   // 2秒以上の交互アニメーション（右向き）
-public Sprite[] chargeAnimLeftSprites;  
-public Sprite[] chargeAnimRightSprites2;  
+    public float throwAnimSpeed = 0.1f;
 
-public Sprite[] chargeAnimLeftSprites2;    // 2秒以上の交互アニメーション（左向き）
-public float chargeAnimSpeed = 0.2f;      // 交互表示の速度
+    [Header("チャージアニメーション")]
+    public Sprite chargePoseRightSprite;      // 構え画像（右向き）
+    public Sprite chargePoseLeftSprite;       // 構え画像（左向き）
+    public Sprite[] chargeAnimRightSprites;   // 2秒以上の交互アニメーション（右向き）
+    public Sprite[] chargeAnimLeftSprites;
+    public Sprite[] chargeAnimRightSprites2;  // 2.6秒以上のアニメーション（右向き）
+    public Sprite[] chargeAnimLeftSprites2;   // 2.6秒以上のアニメーション（左向き）
+    public float chargeAnimSpeed = 0.2f;      // 交互表示の速度
 
-private float chargeAnimTimer = 0;
-private int chargeAnimIndex = 0;
-
-
+    private float chargeAnimTimer = 0;
+    private int chargeAnimIndex = 0;
 
     [Header("移動設定")]
     public float moveSpeed = 5f;
@@ -43,7 +44,6 @@ private int chargeAnimIndex = 0;
 
     [SerializeField] private bool isInvincible = false;
     [SerializeField] private float hitIntervalSec = 0.3f;
-
 
     [Header("ショット設定")]
     [SerializeField] private bool isBlackBoosted = false;
@@ -83,13 +83,12 @@ private int chargeAnimIndex = 0;
     private AudioSource audioSource;
     private SpriteRenderer sr;
     private bool facingRight = true;
-    private float moveInput;
+    
     private int throwAnimIndex = 0;         // アニメーションのインデックス
     private float throwAnimTimer = 0f;      // アニメーションのタイマー
-    private bool isThrowing = false; 
+    private bool isThrowing = false;
 
     // effect_sound
-    // ※ここにチャージ音(0~3)とショット音(4~6)を登録してください
     public AudioClip[] enegyDrinkSound;
     private enum DrinkSoundType { first, second, third, forth, first_shot, second_shot, third_shot }
     private DrinkSoundType currentChargeType = DrinkSoundType.first;
@@ -102,7 +101,7 @@ private int chargeAnimIndex = 0;
         currentHealth = maxHealth;
         UpdateHPBar();
         originalMoveSpeed = moveSpeed;
-        
+
         // AudioSourceの設定
         audioSource = gameObject.AddComponent<AudioSource>();
         sr.sprite = standingRightSprite;
@@ -110,83 +109,49 @@ private int chargeAnimIndex = 0;
 
     void Update()
     {
+        // --- 投げアニメーション処理 ---
         if (isThrowing)
         {
-            // 投げアニメーションの更新
             throwAnimTimer += Time.deltaTime;
             if (throwAnimTimer >= throwAnimSpeed)
             {
                 throwAnimTimer = 0;
                 throwAnimIndex++;
 
-                // 右向きの投げアニメーション
                 if (facingRight && throwAnimRightSprites.Length > 0)
                 {
                     sr.sprite = throwAnimRightSprites[throwAnimIndex % throwAnimRightSprites.Length];
                 }
-                // 左向きの投げアニメーション
                 else if (!facingRight && throwAnimLeftSprites.Length > 0)
                 {
                     sr.sprite = throwAnimLeftSprites[throwAnimIndex % throwAnimLeftSprites.Length];
                 }
             }
 
-            // アニメーションが終わったら元の状態に戻る
-            if (throwAnimIndex >= throwAnimRightSprites.Length || throwAnimIndex >= throwAnimLeftSprites.Length)
+            // アニメーション終了判定
+            if ((facingRight && throwAnimIndex >= throwAnimRightSprites.Length) || 
+                (!facingRight && throwAnimIndex >= throwAnimLeftSprites.Length))
             {
                 isThrowing = false;
                 throwAnimIndex = 0;
-                sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;  // 元の立ち状態に戻す
+                sr.sprite = facingRight ? standingRightSprite : standingLeftSprite; 
             }
+            // 投げ動作中はここでリターンせず、移動などの入力を受け付ける場合は下に続ける
+            // ここでは投げモーション優先としておきますが、必要ならreturnを削除してください
+            // return; 
         }
-    
+
         if (isDead) return;
 
-        // --- 移動処理 ---
+        // --- 移動入力 ---
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
         if (moveInput > 0) facingRight = true;
         else if (moveInput < 0) facingRight = false;
 
-        // --- アニメーション処理 ---
-        if (Mathf.Abs(moveInput) > 0.1f)
-        {
-            // 移動中 → 走りアニメーション
-            runAnimTimer += Time.deltaTime;
-            if (runAnimTimer >= runAnimSpeed)
-            {
-                runAnimTimer = 0;
-                runAnimIndex++;
-                if (facingRight)
-                {
-                    if (runRightSprites.Length > 0)
-                    {
-                        runAnimIndex %= runRightSprites.Length;
-                        sr.sprite = runRightSprites[runAnimIndex];
-                    }
-                }
-                else
-                {
-                    if (runLeftSprites.Length > 0)
-                    {
-                        runAnimIndex %= runLeftSprites.Length;
-                        sr.sprite = runLeftSprites[runAnimIndex];
-                    }
-                }
-            }
-        }
-        else
-        {
-            // 停止中
-            sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
-            runAnimIndex = 0;
-            runAnimTimer = 0;
-        }
-
-        // --- ジャンプ・接地判定 ---
+        // --- ジャンプ判定 ---
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
         if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -200,16 +165,15 @@ private int chargeAnimIndex = 0;
         }
 
         // =========================================================
-        // ショット・チャージ処理 (ここを整理・統合しました)
+        // ショット・チャージ処理
         // =========================================================
 
-        // 1. 押し始め (初期化)
+        // 1. 押し始め
         if (Input.GetKeyDown(KeyCode.Space))
         {
             spacePressTime = Time.time;
             isCharging = true;
-            
-            // 0.6秒未満は無音(first)からスタート
+
             currentChargeType = DrinkSoundType.first;
             isSoundPlaying = false;
             audioSource.Stop();
@@ -218,7 +182,6 @@ private int chargeAnimIndex = 0;
         // 2. 離した時 (発射)
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            // 速度リセット
             if (isSpeedReduced)
             {
                 moveSpeed = originalMoveSpeed;
@@ -226,21 +189,22 @@ private int chargeAnimIndex = 0;
             }
 
             isCharging = false;
+            isThrowing = true; // 投げアニメーション開始フラグ
             moveSpeed = originalMoveSpeed;
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
 
-            // チャージ音を停止
+            // 音停止
             audioSource.Stop();
             audioSource.loop = false;
             isSoundPlaying = false;
 
             // 発射処理
-            DrinkSoundType shotSoundToPlay = DrinkSoundType.first_shot; // 仮
-            bool shouldPlayShotSound = false; // 連打対策フラグ
+            DrinkSoundType shotSoundToPlay = DrinkSoundType.first_shot;
+            bool shouldPlayShotSound = false;
 
             if (isBlackBoosted)
             {
-                shouldPlayShotSound = true; // 黒エナドリ中は連打でも音を鳴らす
+                shouldPlayShotSound = true;
                 if (holdTime >= 2.6f) {
                     ThrowBox(true, true, new Vector2(1f, 0.25f)); shotSoundToPlay = DrinkSoundType.third_shot;
                 }
@@ -254,7 +218,6 @@ private int chargeAnimIndex = 0;
             }
             else
             {
-                // 通常時
                 if (holdTime >= 2.6f) {
                     ThrowBox(true, true, new Vector2(1f, 0.25f));
                     shotSoundToPlay = DrinkSoundType.third_shot;
@@ -269,131 +232,28 @@ private int chargeAnimIndex = 0;
                 else if (holdTime >= 0.6f) {
                     ThrowBox(true, false, new Vector2(1f, 0.25f));
                     shotSoundToPlay = DrinkSoundType.first_shot;
-                    shouldPlayShotSound = true; // 0.6秒以上なので鳴らす
+                    shouldPlayShotSound = true;
                 }
                 else {
-                    // 連打 (0.6秒未満)
                     ThrowBox(false, false, new Vector2(1f, 0.25f));
                     shotSoundToPlay = DrinkSoundType.first_shot;
-                    shouldPlayShotSound = false; // ★鳴らさない
+                    shouldPlayShotSound = false;
                 }
             }
 
-            // フラグが立っている場合のみショット音再生
             if (shouldPlayShotSound)
             {
                 audioSource.PlayOneShot(enegyDrinkSound[(int)shotSoundToPlay]);
             }
         }
 
-        // 3. チャージ中 (音の切り替え管理)
+        // 3. チャージ中の処理 (音とアニメーション)
         if (isCharging)
         {
             holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
             DrinkSoundType targetChargeType;
 
-// --- アニメーション処理 ---
-if (isCharging)
-{
-    // チャージ中のアニメーション
-    holdTime = (Time.time - spacePressTime) * chargeTimeMultiplier;
-
-    if (holdTime >= 2.6f)
-    {
-        // 2.6秒以上 → 新しいアニメーションに切り替え
-        chargeAnimTimer += Time.deltaTime;
-        if (chargeAnimTimer >= chargeAnimSpeed)
-        {
-            chargeAnimTimer = 0;
-            chargeAnimIndex++;
-        }
-
-        // 2.6秒以上で新しいアニメーションに切り替え
-        if (facingRight && chargeAnimRightSprites.Length > 0)
-        {
-            sr.sprite = chargeAnimRightSprites[chargeAnimIndex % chargeAnimRightSprites.Length];
-        }
-        else if (!facingRight && chargeAnimLeftSprites.Length > 0)
-        {
-            sr.sprite = chargeAnimLeftSprites[chargeAnimIndex % chargeAnimLeftSprites.Length];
-        }
-
-        // さらに異なるアニメーションにしたい場合は、別のスプライトセットに変更
-        // 例えば、別の配列（chargeAnimRightSprites2）を追加して切り替える
-        if (holdTime >= 2.6f)
-        {
-            // ここでさらに新しいアニメーションに切り替え（例えば別のスプライト）
-            if (facingRight && chargeAnimRightSprites2.Length > 0)
-            {
-                sr.sprite = chargeAnimRightSprites2[chargeAnimIndex % chargeAnimRightSprites2.Length];
-            }
-            else if (!facingRight && chargeAnimLeftSprites2.Length > 0)
-            {
-                sr.sprite = chargeAnimLeftSprites2[chargeAnimIndex % chargeAnimLeftSprites2.Length];
-            }
-        }
-    }
-    else if (holdTime >= 1.6f)
-    {
-        // 1.6秒以上 → 交互アニメーション
-        chargeAnimTimer += Time.deltaTime;
-        if (chargeAnimTimer >= chargeAnimSpeed)
-        {
-            chargeAnimTimer = 0;
-            chargeAnimIndex++;
-        }
-
-        // 2秒以上でアニメーション
-        if (facingRight && chargeAnimRightSprites.Length > 0)
-        {
-            sr.sprite = chargeAnimRightSprites[chargeAnimIndex % chargeAnimRightSprites.Length];
-        }
-        else if (!facingRight && chargeAnimLeftSprites.Length > 0)
-        {
-            sr.sprite = chargeAnimLeftSprites[chargeAnimIndex % chargeAnimLeftSprites.Length];
-        }
-    }
-    else
-    {
-        // 2秒未満 → 構え画像
-        sr.sprite = facingRight ? chargePoseRightSprite : chargePoseLeftSprite;
-        chargeAnimIndex = 0;  // インデックスリセット
-        chargeAnimTimer = 0;  // タイマーリセット
-    }
-}
-else
-{
-    // チャージしていないときのアニメーション（通常の移動アニメーション）
-    if (Mathf.Abs(moveInput) > 0.1f)
-    {
-        // 走りアニメーション
-        runAnimTimer += Time.deltaTime;
-        if (runAnimTimer >= runAnimSpeed)
-        {
-            runAnimTimer = 0;
-            runAnimIndex++;
-        }
-
-        if (facingRight && runRightSprites.Length > 0)
-            sr.sprite = runRightSprites[runAnimIndex % runRightSprites.Length];
-        else if (!facingRight && runLeftSprites.Length > 0)
-            sr.sprite = runLeftSprites[runAnimIndex % runLeftSprites.Length];
-    }
-    else
-    {
-        // 停止中 → 立ち姿
-        sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
-        runAnimIndex = 0;
-        runAnimTimer = 0;
-    }
-}
-
-
-
-
-
-
-            // 時間経過によるランク判定
+            // --- 音のランク管理 ---
             if (holdTime >= 2.6f)
             {
                 targetChargeType = DrinkSoundType.forth;
@@ -406,28 +266,25 @@ else
             }
             else if (holdTime >= 0.6f)
             {
-                targetChargeType = DrinkSoundType.second; // ここから音が鳴り始める
+                targetChargeType = DrinkSoundType.second;
             }
             else
             {
-                targetChargeType = DrinkSoundType.first; // 0.6秒未満は無音
+                targetChargeType = DrinkSoundType.first;
             }
 
-            // ランクが変わった瞬間のみ処理
+            // 音の切り替え
             if (currentChargeType != targetChargeType)
             {
                 audioSource.Stop();
                 currentChargeType = targetChargeType;
 
-                // 無音ランク(first)以外なら音を鳴らす
                 if (targetChargeType != DrinkSoundType.first)
                 {
-                    // ループ音再生
                     audioSource.clip = enegyDrinkSound[(int)targetChargeType];
                     audioSource.loop = true;
                     audioSource.Play();
 
-                    // 完了通知音(ショット音)を重ねて再生
                     int shotIndex = (int)targetChargeType + 3;
                     if (shotIndex < enegyDrinkSound.Length)
                     {
@@ -436,10 +293,79 @@ else
                 }
                 isSoundPlaying = true;
             }
+
+            // --- チャージ中のアニメーション ---
+            if (holdTime >= 2.6f)
+            {
+                // 2.6秒以上
+                chargeAnimTimer += Time.deltaTime;
+                if (chargeAnimTimer >= chargeAnimSpeed)
+                {
+                    chargeAnimTimer = 0;
+                    chargeAnimIndex++;
+                }
+                
+                if (facingRight && chargeAnimRightSprites2.Length > 0)
+                    sr.sprite = chargeAnimRightSprites2[chargeAnimIndex % chargeAnimRightSprites2.Length];
+                else if (!facingRight && chargeAnimLeftSprites2.Length > 0)
+                    sr.sprite = chargeAnimLeftSprites2[chargeAnimIndex % chargeAnimLeftSprites2.Length];
+            }
+            else if (holdTime >= 1.6f)
+            {
+                // 1.6秒以上
+                chargeAnimTimer += Time.deltaTime;
+                if (chargeAnimTimer >= chargeAnimSpeed)
+                {
+                    chargeAnimTimer = 0;
+                    chargeAnimIndex++;
+                }
+
+                if (facingRight && chargeAnimRightSprites.Length > 0)
+                    sr.sprite = chargeAnimRightSprites[chargeAnimIndex % chargeAnimRightSprites.Length];
+                else if (!facingRight && chargeAnimLeftSprites.Length > 0)
+                    sr.sprite = chargeAnimLeftSprites[chargeAnimIndex % chargeAnimLeftSprites.Length];
+            }
+            else
+            {
+                // 1.6秒未満 (構え)
+                sr.sprite = facingRight ? chargePoseRightSprite : chargePoseLeftSprite;
+                chargeAnimIndex = 0;
+                chargeAnimTimer = 0;
+            }
+        }
+        else
+        {
+            // --- チャージしていない時の通常アニメーション ---
+            // (投げ動作中は上部で処理しているので、ここでは投げ中でない場合のみ処理)
+            if (!isThrowing)
+            {
+                if (Mathf.Abs(moveInput) > 0.1f)
+                {
+                    // 走り
+                    runAnimTimer += Time.deltaTime;
+                    if (runAnimTimer >= runAnimSpeed)
+                    {
+                        runAnimTimer = 0;
+                        runAnimIndex++;
+                    }
+
+                    if (facingRight && runRightSprites.Length > 0)
+                        sr.sprite = runRightSprites[runAnimIndex % runRightSprites.Length];
+                    else if (!facingRight && runLeftSprites.Length > 0)
+                        sr.sprite = runLeftSprites[runAnimIndex % runLeftSprites.Length];
+                }
+                else
+                {
+                    // 停止
+                    sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
+                    runAnimIndex = 0;
+                    runAnimTimer = 0;
+                }
+            }
         }
     }
 
-    // --- ThrowBoxなどの関数は変更なし ---
+    // --- メソッド定義 ---
 
     void ThrowBox(bool explosive, bool isBox, Vector2 throwDir)
     {
@@ -448,16 +374,6 @@ else
 
         GameObject obj = Instantiate(prefabToThrow, throwPoint.position, Quaternion.identity);
         audioSource.PlayOneShot(throwSound, throwSoundVolume);
-
-        // CanBehaviorが存在する場合の処理 (元のコードにあったため維持)
-        // ※CanBehaviorクラスがなければここはエラーになるので、必要に応じてコメントアウトしてください
-        /*
-        CanBehavior can = obj.GetComponent<CanBehavior>();
-        if (can != null)
-        {
-            can.explosive = explosive;
-        }
-        */
 
         Rigidbody2D objRb = obj.GetComponent<Rigidbody2D>();
         if (objRb != null)
@@ -492,6 +408,7 @@ else
             Die();
         }
     }
+
     public void DamageFlash()
     {
         StartCoroutine(FlashRoutine());
@@ -501,10 +418,10 @@ else
     {
         for (int i = 0; i < damageflashCount; i++)
         {
-            sr.color = Color.red;                 // 赤
+            sr.color = Color.red;
             yield return new WaitForSeconds(damageflashDuration);
 
-            sr.color = Color.white;               // 元に戻す
+            sr.color = Color.white;
             yield return new WaitForSeconds(damageflashDuration);
         }
     }
@@ -520,8 +437,8 @@ else
     public void Heal(int healAmount)
     {
         currentHealth += healAmount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // HPがmaxを超えないように
-        UpdateHPBar(); // HPバーを更新
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        UpdateHPBar();
         audioSource.PlayOneShot(healSound, healSoundVolume);
         Debug.Log($"回復！ 現在のHP: {currentHealth}");
     }
@@ -529,20 +446,20 @@ else
     private IEnumerator SpeedBoostCoroutine(float boostAmount, float duration)
     {
         isSpeedBoosted = true;
-        moveSpeed *= boostAmount; // スピードを上げる
+        moveSpeed *= boostAmount;
         Debug.Log("スピードアップ！");
 
-        yield return new WaitForSeconds(duration); // 指定時間待つ
+        yield return new WaitForSeconds(duration);
 
-        moveSpeed = originalMoveSpeed; // 元に戻す
+        moveSpeed = originalMoveSpeed;
         isSpeedBoosted = false;
         Debug.Log("元のスピードに戻った");
     }
 
-    IEnumerator InvincibleCoroutine() // 無敵時間を管理するコルーチン (part5で追加)
+    IEnumerator InvincibleCoroutine()
     {
-        yield return new WaitForSeconds(hitIntervalSec); // 指定した秒数待機
-        isInvincible = false; // 無敵状態を解除
+        yield return new WaitForSeconds(hitIntervalSec);
+        isInvincible = false;
     }
 
     public void ActivateBlackBoost(float duration, float chargeMultiplier)
@@ -556,7 +473,7 @@ else
     private IEnumerator BlackBoostCoroutine(float duration, float chargeMultiplier)
     {
         isBlackBoosted = true;
-        chargeTimeMultiplier = chargeMultiplier; // チャージ時間を短縮（例: 0.5f）
+        chargeTimeMultiplier = chargeMultiplier;
         Debug.Log("ショット強化！");
         audioSource.PlayOneShot(powerupSound, powerupSoundVolume);
         yield return new WaitForSeconds(duration);
@@ -587,13 +504,9 @@ else
 
     private void OnDrawGizmos()
     {
-        // groundCheckが設定されている場合のみ実行
         if (groundCheck != null)
         {
-            // isGroundedがtrueなら緑、falseなら赤色に設定
             Gizmos.color = isGrounded ? Color.green : Color.red;
-
-            // UpdateのOverlapCircleと全く同じ位置・半径で円を描画する
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
