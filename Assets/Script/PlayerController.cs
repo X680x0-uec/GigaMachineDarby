@@ -8,8 +8,11 @@ public class PlayerController : MonoBehaviour
     [Header("スプライト設定")]
     public Sprite standingRightSprite;
     public Sprite standingLeftSprite; 
-    public Sprite runRightSprite; 
-    public Sprite runLeftSprite; 
+public Sprite[] runRightSprites;
+public Sprite[] runLeftSprites; 
+public float runAnimSpeed = 0.1f;
+private int runAnimIndex = 0; 
+private float runAnimTimer = 0;
 
     [Header("移動設定")]
     public float moveSpeed = 5f;
@@ -101,28 +104,48 @@ private AudioSource chargeAudioSource;
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-        // 向き反転
-        // 向きの変更
-        if (moveInput > 0)
+    if (moveInput > 0)
+    {
+        facingRight = true;
+    }
+    else if (moveInput < 0)
+    {
+        facingRight = false;
+    }
+    
+// 状態ごとの画像切り替え
+if (Mathf.Abs(moveInput) > 0.1f)
+{
+    // 移動中 → 走りアニメーション
+    runAnimTimer += Time.deltaTime;
+    if (runAnimTimer >= runAnimSpeed)
+    {
+        runAnimTimer = 0;
+        runAnimIndex++;
+        if (facingRight)
         {
-            facingRight = true;
-        }
-        else if (moveInput < 0)
-        {
-            facingRight = false;
-        }
-
-        // 状態ごとの画像切り替え
-        if (Mathf.Abs(moveInput) > 0.1f)
-        {
-            // 移動中
-            sr.sprite = facingRight ? runRightSprite : runLeftSprite;
+            if (runRightSprites.Length > 0)
+                runAnimIndex %= runRightSprites.Length;
+            sr.sprite = runRightSprites[runAnimIndex];
         }
         else
         {
-            // 停止中
-            sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
+            if (runLeftSprites.Length > 0)
+                runAnimIndex %= runLeftSprites.Length;
+            sr.sprite = runLeftSprites[runAnimIndex];
         }
+    }
+}
+else
+{
+    // 停止中
+    sr.sprite = facingRight ? standingRightSprite : standingLeftSprite;
+
+    // アニメーションリセット
+    runAnimIndex = 0;
+    runAnimTimer = 0;
+}
+
 
         // 地面判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
