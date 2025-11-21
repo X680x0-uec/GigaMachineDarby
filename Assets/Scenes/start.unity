@@ -465,6 +465,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &658336745
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 658336746}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &658336746
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658336745}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.689423, y: 1.0839751, z: 13.572051}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &698872184
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,8 +1025,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standingRightSprite: {fileID: 1147863210727118903, guid: 3712cb2bd18ebf64292482bfc35df881, type: 3}
   standingLeftSprite: {fileID: -3977661166665981135, guid: f52a0ba1a1b43264aaf02acaaf931d1b, type: 3}
-  runRightSprite: {fileID: -3299827535315736150, guid: 894e6bea9525c7846a08a5cc479baad0, type: 3}
-  runLeftSprite: {fileID: -930752467265444883, guid: b4577d0734f9a9d4e8c32cca73dcfcde, type: 3}
+  runRightSprites: []
+  runLeftSprites: []
+  runAnimSpeed: 0.1
+  throwAnimRightSprites: []
+  throwAnimLeftSprites: []
+  throwAnimSpeed: 0.1
+  chargePoseRightSprite: {fileID: 0}
+  chargePoseLeftSprite: {fileID: 0}
+  chargeAnimRightSprites: []
+  chargeAnimLeftSprites: []
+  chargeAnimRightSprites2: []
+  chargeAnimLeftSprites2: []
+  chargeAnimSpeed: 0.2
   moveSpeed: 10
   jumpForce: 20
   groundLayer:
@@ -1014,12 +1056,15 @@ MonoBehaviour:
   throwSoundVolume: 1
   maxHealth: 100
   HPbar: {fileID: 698872185}
+  damageflashDuration: 0.1
+  damageflashCount: 4
   damageSound: {fileID: 8300000, guid: 2794c06f2f03873429802b3ff1872e21, type: 3}
   damageSoundVolume: 0.599
   healSound: {fileID: 8300000, guid: ff2110a3a9259d24aa86de07c050d856, type: 3}
   healSoundVolume: 0.401
   powerupSound: {fileID: 8300000, guid: 2af2479fad9d39847be2b31ce79aee9b, type: 3}
   powerupSoundVolume: 0.707
+  enegyDrinkSound: []
 --- !u!50 &877526788
 Rigidbody2D:
   serializedVersion: 5
@@ -1282,7 +1327,7 @@ SpriteRenderer:
   m_Size: {x: 50, y: 30.004883}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &953874598
@@ -1512,6 +1557,53 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1 &1316939945
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1316939947}
+  - component: {fileID: 1316939946}
+  m_Layer: 0
+  m_Name: GaneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1316939946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316939945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d293f4f97e2af2e47b4a2982ef8adb93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalTime: 0
+  defeatedEnemies: 0
+  isGameActive: 0
+--- !u!4 &1316939947
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316939945}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.373234, y: -0.66569966, z: 9.156455}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1430899738
 GameObject:
   m_ObjectHideFlags: 0
@@ -1628,7 +1720,7 @@ SpriteRenderer:
   m_Size: {x: 50, y: 30.004883}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1430899741
@@ -2082,3 +2174,5 @@ SceneRoots:
   - {fileID: 191914763}
   - {fileID: 1895436848}
   - {fileID: 877526791}
+  - {fileID: 658336746}
+  - {fileID: 1316939947}
