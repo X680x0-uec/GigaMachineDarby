@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,7 @@ public class stage1_to_2 : MonoBehaviour
     [SerializeField] private float player_y = 0f;
     [SerializeField] private float door_x = 0f;
     [SerializeField] private float door_y = 0f;
+    public string Nextscene;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,9 +26,9 @@ public class stage1_to_2 : MonoBehaviour
         door_x = transform.position.x;
         door_y = transform.position.y;
 
-        if (Math.Abs(door_x - player_x) < 0.1f && Math.Abs(door_y - player_y) < 3f)
+        if (Math.Abs(door_x - player_x) < 0.1f && Math.Abs(door_y - player_y) < 100f)
         {
-            SceneManager.LoadScene("stage2", LoadSceneMode.Single);
+            SceneManager.LoadScene(Nextscene, LoadSceneMode.Single);
         }
     }
 }

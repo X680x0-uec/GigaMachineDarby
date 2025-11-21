@@ -139,12 +139,19 @@ public class Enemy : MonoBehaviour
 
     private void Die(Vector2 direction)
     {
-        //分裂する敵にのみ死亡処理を別のスクリプトで処理させる
+//分裂する敵にのみ死亡処理を別のスクリプトで処理させる
         if (deathHandler != null && deathHandler.TryHandleDeath(direction))
         {
             return;
         }
         isDead = true;
+
+        // ★★★ ここに追加：GameManagerに撃破を通知 ★★★
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.AddEnemyCount();
+        }
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
         if (rb != null)
         {

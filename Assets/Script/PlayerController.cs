@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Unity.Mathematics;
 using System;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -492,6 +493,21 @@ public class PlayerController : MonoBehaviour
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
         Debug.Log("Player Died");
+
+        // 1.5秒後にゲームオーバー遷移処理を呼ぶ
+        Invoke("TransitionToGameOver", 1.5f);
+    }
+
+    void TransitionToGameOver()
+    {
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.GameOver();
+        }
+        else
+        {
+            SceneManager.LoadScene("Bad");
+        }
     }
 
     void UpdateHPBar()
