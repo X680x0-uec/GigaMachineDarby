@@ -2,8 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-public class stage1_to_2 : MonoBehaviour
+public class clear : MonoBehaviour
 {
     [SerializeField] Transform player;
 
@@ -28,7 +27,7 @@ public class stage1_to_2 : MonoBehaviour
 
         if (Math.Abs(door_x - player_x) < 0.1f && Math.Abs(door_y - player_y) < 100f)
         {
-            SceneManager.LoadScene("stage2", LoadSceneMode.Single);
+            SceneManager.LoadScene("clear", LoadSceneMode.Single);
         }
     }
 }
