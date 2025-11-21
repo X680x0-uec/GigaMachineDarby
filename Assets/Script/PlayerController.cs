@@ -506,7 +506,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("Bad");
+            SceneManager.LoadScene("End");
         }
     }
 
