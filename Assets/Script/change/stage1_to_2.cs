@@ -19,16 +19,27 @@ public class stage1_to_2 : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        player_x = player.position.x;
-        player_y = player.position.y;
-        door_x = transform.position.x;
-        door_y = transform.position.y;
+    //void Update()
+    //{
+    //    player_x = player.position.x;
+    //    player_y = player.position.y;
+    //    door_x = transform.position.x;
+    //    door_y = transform.position.y;
 
-        if (Math.Abs(door_x - player_x) < 0.1f && Math.Abs(door_y - player_y) < 100f)
+    //    if (Math.Abs(door_x - player_x) < 0.1f && Math.Abs(door_y - player_y) < 100f)
+    //    {
+    //        SceneManager.LoadScene("stage2", LoadSceneMode.Single);
+    //    }
+    //}
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        GameObject player = collision.gameObject;
+        if (player != null)
         {
-            SceneManager.LoadScene("stage2", LoadSceneMode.Single);
+            if (player.tag == "Player")
+            {
+                SceneManager.LoadScene("stage2", LoadSceneMode.Single);
+            }
         }
     }
 }
